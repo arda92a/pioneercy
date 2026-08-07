@@ -1,12 +1,23 @@
-import { withAuth } from "next-auth/middleware";
+import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
 
-export default withAuth({
-  pages: {
-    signIn: "/admin/login",
-  },
-});
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-// Login sayfası hariç tüm /admin/* rotalarını koru
+  // Login sayfasında token varsa dashboard'a yönlendir
+  if (pathname === "/admin/login") {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (token) return NextResponse.redirect(new URL("/admin", req.url));
+    return NextResponse.next();
+  }
+
+  // Diğer tüm /admin/* rotaları için token zorunlu
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (!token) return NextResponse.redirect(new URL("/admin/login", req.url));
+
+  return NextResponse.next();
+}
+
 export const config = {
-  matcher: ["/admin/((?!login$).*)"],
+  matcher: ["/admin/:path*"],
 };
