@@ -3,7 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon } from "lucide-react";
+import { useAdminTheme } from "@/components/AdminThemeProvider";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
@@ -15,6 +16,7 @@ const navItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { theme, toggle } = useAdminTheme();
 
   function isActive(href: string, exact?: boolean) {
     return exact ? pathname === href : pathname.startsWith(href);
@@ -79,6 +81,17 @@ export default function AdminSidebar() {
 
         {/* Footer */}
         <div className="p-4 border-t border-[#2a2a2a] space-y-2">
+          {/* Theme toggle */}
+          <button
+            onClick={toggle}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:text-white hover:bg-[#1a1a1a] transition-colors"
+          >
+            {theme === "dark" ? (
+              <><Sun className="w-4 h-4 text-yellow-400" /><span>Aydınlık Mod</span></>
+            ) : (
+              <><Moon className="w-4 h-4 text-blue-400" /><span>Karanlık Mod</span></>
+            )}
+          </button>
           <a
             href="/"
             target="_blank"

@@ -8,6 +8,48 @@
   --pioneer-gray-light: #2a2a2a;
 }
 
+/* ===== Admin Light Theme Overrides ===== */
+[data-admin-theme="light"] {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+/* Main backgrounds */
+[data-admin-theme="light"] .bg-\[\#0a0a0a\] { background-color: #f1f5f9 !important; }
+[data-admin-theme="light"] .bg-\[\#0d0d0d\] { background-color: #e2e8f0 !important; }
+[data-admin-theme="light"] .bg-\[\#111111\] { background-color: #f8fafc !important; }
+[data-admin-theme="light"] .bg-\[\#1a1a1a\] { background-color: #ffffff !important; }
+[data-admin-theme="light"] .bg-\[\#2a2a2a\] { background-color: #e2e8f0 !important; }
+[data-admin-theme="light"] .bg-\[\#3a3a3a\] { background-color: #cbd5e1 !important; }
+/* Borders */
+[data-admin-theme="light"] .border-\[\#2a2a2a\] { border-color: #e2e8f0 !important; }
+[data-admin-theme="light"] .border-\[\#3a3a3a\] { border-color: #cbd5e1 !important; }
+[data-admin-theme="light"] .divide-\[\#2a2a2a\] > * + * { border-color: #e2e8f0 !important; }
+/* Text */
+[data-admin-theme="light"] .text-white { color: #0f172a !important; }
+[data-admin-theme="light"] .text-gray-300 { color: #334155 !important; }
+[data-admin-theme="light"] .text-gray-400 { color: #475569 !important; }
+[data-admin-theme="light"] .text-gray-500 { color: #64748b !important; }
+[data-admin-theme="light"] .text-gray-600 { color: #94a3b8 !important; }
+[data-admin-theme="light"] .text-gray-700 { color: #cbd5e1 !important; }
+/* Hover states */
+[data-admin-theme="light"] .hover\:bg-\[\#1a1a1a\]:hover { background-color: #f1f5f9 !important; }
+[data-admin-theme="light"] .hover\:bg-\[\#2a2a2a\]:hover { background-color: #e2e8f0 !important; }
+/* Inputs */
+[data-admin-theme="light"] input,
+[data-admin-theme="light"] textarea,
+[data-admin-theme="light"] select {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+[data-admin-theme="light"] input::placeholder,
+[data-admin-theme="light"] textarea::placeholder { color: #94a3b8 !important; }
+/* Active sidebar item stays red */
+[data-admin-theme="light"] .bg-\[\#E4171E\] { background-color: #E4171E !important; }
+[data-admin-theme="light"] .bg-\[\#E4171E\] .text-white { color: #ffffff !important; }
+/* Table rows */
+[data-admin-theme="light"] .hover\:bg-\[\#111111\]:hover { background-color: #f8fafc !important; }
+
 @theme inline {
   --color-pioneer-red: var(--pioneer-red);
   --color-pioneer-red-dark: var(--pioneer-red-dark);
