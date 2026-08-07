@@ -1,23 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pioneer-red: #E4171E;
+  --pioneer-red-dark: #B5121A;
+  --pioneer-black: #0d0d0d;
+  --pioneer-gray: #1a1a1a;
+  --pioneer-gray-light: #2a2a2a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-pioneer-red: var(--pioneer-red);
+  --color-pioneer-red-dark: var(--pioneer-red-dark);
+  --color-pioneer-black: var(--pioneer-black);
+  --color-pioneer-gray: var(--pioneer-gray);
+  --color-pioneer-gray-light: var(--pioneer-gray-light);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
+
+body {
+  background-color: var(--pioneer-black);
+  color: #f0f0f0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+.pioneer-gradient {
+  background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
+}
+
+.hero-gradient {
+  background: linear-gradient(180deg, rgba(13,13,13,0) 0%, rgba(13,13,13,0.7) 60%, rgba(13,13,13,1) 100%);
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(228, 23, 30, 0.15);
+}
+
+.red-glow {
+  box-shadow: 0 0 20px rgba(228, 23, 30, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #E4171E;
+  border-radius: 3px;
+}
+
 
 body {
   background: var(--background);
