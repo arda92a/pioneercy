@@ -1,13 +1,7 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminSessionProvider from "@/components/AdminSessionProvider";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
-
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminSessionProvider>
       <div className="min-h-screen bg-[#0a0a0a] flex">
