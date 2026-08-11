@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import AddCategoryForm from "@/components/AddCategoryForm";
-import DeleteCategoryButton from "@/components/DeleteCategoryButton";
+import CategoryList from "@/components/CategoryList";
 
 export const dynamic = "force-dynamic";
 
@@ -28,24 +28,7 @@ export default async function KategorilerPage() {
             <div className="px-5 py-4 border-b border-[#2a2a2a]">
               <span className="text-white font-semibold text-sm">Mevcut Kategoriler</span>
             </div>
-            {categories.length === 0 ? (
-              <div className="px-5 py-8 text-center text-gray-600 text-sm">Henüz kategori yok</div>
-            ) : (
-              <div className="divide-y divide-[#1f1f1f]">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="flex items-center justify-between px-5 py-4">
-                    <div>
-                      <div className="text-white text-sm font-medium">{cat.name}</div>
-                      <div className="text-gray-600 text-xs mt-0.5">
-                        /{cat.slug} · {cat._count.products} ürün
-                        {cat.description && <span className="ml-2 text-gray-700">— {cat.description}</span>}
-                      </div>
-                    </div>
-                    <DeleteCategoryButton id={cat.id} name={cat.name} productCount={cat._count.products} />
-                  </div>
-                ))}
-              </div>
-            )}
+            <CategoryList categories={categories} />
           </div>
         </div>
 
