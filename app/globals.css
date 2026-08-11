@@ -105,6 +105,17 @@ body {
 .anim-delay-3 { animation-delay: 240ms; }
 .anim-delay-4 { animation-delay: 320ms; }
 
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(56px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-56px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-right { animation: slideInFromRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-slide-left  { animation: slideInFromLeft  0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
 .red-glow {
   box-shadow: 0 0 20px rgba(228, 23, 30, 0.3);
 }

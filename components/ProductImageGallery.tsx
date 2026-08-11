@@ -9,9 +9,16 @@ interface Props {
 
 export default function ProductImageGallery({ images, name }: Props) {
   const [current, setCurrent] = useState(0);
+  const [dir, setDir] = useState<"right" | "left">("right");
 
-  const prev = () => setCurrent((i) => (i - 1 + images.length) % images.length);
-  const next = () => setCurrent((i) => (i + 1) % images.length);
+  function prev() {
+    setDir("left");
+    setCurrent((i) => (i - 1 + images.length) % images.length);
+  }
+  function next() {
+    setDir("right");
+    setCurrent((i) => (i + 1) % images.length);
+  }
 
   if (images.length === 0) {
     return (
@@ -29,7 +36,7 @@ export default function ProductImageGallery({ images, name }: Props) {
           key={current}
           src={images[current]}
           alt={`${name} - ${current + 1}`}
-          className="w-full h-full object-contain p-8 animate-fade-in"
+          className={`w-full h-full object-contain p-8 ${dir === "right" ? "animate-slide-right" : "animate-slide-left"}`}
         />
 
         {images.length > 1 && (
