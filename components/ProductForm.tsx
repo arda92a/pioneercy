@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, X, Star, Loader2, Camera, CheckCircle } from "lucide-react";
+import { Upload, X, Star, Loader2, Camera, Plus } from "lucide-react";
 
 interface Category {
   id: number;
@@ -16,6 +16,7 @@ interface ProductFormProps {
     description?: string;
     price?: number | null;
     image?: string | null;
+    images?: string | null;
     categoryId?: number;
     featured?: boolean;
     stock?: number;
@@ -28,6 +29,13 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const isEdit = !!initial?.id;
 
+  // Parse initial images from JSON or fallback to single image
+  const initImages: string[] = (() => {
+    try { const arr = JSON.parse(initial?.images ?? "[]"); return Array.isArray(arr) ? arr : []; }
+    catch { return initial?.image ? [initial.image] : []; }
+  })();
+
+  const [images, setImages] = useState<string[]>(initImages);
   const [form, setForm] = useState({
     name: initial?.name ?? "",
     description: initial?.description ?? "",
@@ -35,13 +43,11 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     categoryId: initial?.categoryId?.toString() ?? categories[0]?.id?.toString() ?? "",
     featured: initial?.featured ?? false,
     stock: initial?.stock?.toString() ?? "0",
-    image: initial?.image ?? "",
   });
 
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
   function set(field: string, value: string | boolean) {
@@ -58,9 +64,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     const res = await fetch("/api/upload", { method: "POST", body: fd });
     const data = await res.json();
     if (data.url) {
-      set("image", data.url);
-      setUploadSuccess(true);
-      setTimeout(() => setUploadSuccess(false), 3000);
+      setImages((prev) => [...prev, data.url]);
     } else {
       setError(data.error ?? "Görsel yüklenemedi");
     }
@@ -68,19 +72,23 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // Copy file reference before resetting input (required for Android Chrome)
-    const fileCopy = new File([file], file.name, { type: file.type || "image/jpeg" });
+    const files = Array.from(e.target.files ?? []);
     e.target.value = "";
-    await uploadFile(fileCopy);
+    for (const file of files) {
+      const copy = new File([file], file.name, { type: file.type || "image/jpeg" });
+      await uploadFile(copy);
+    }
   }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     setDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) uploadFile(file);
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach((f) => uploadFile(f));
+  }
+
+  function removeImage(idx: number) {
+    setImages((prev) => prev.filter((_, i) => i !== idx));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -93,7 +101,8 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
       name: form.name,
       description: form.description || null,
       price: form.price !== "" ? parseFloat(form.price) : null,
-      image: form.image || null,
+      image: images[0] || null,
+      images: JSON.stringify(images),
       categoryId: parseInt(form.categoryId),
       featured: form.featured,
       stock: parseInt(form.stock) || 0,
@@ -123,77 +132,71 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
 
       {/* Image upload */}
       <div>
-        <label className="block text-sm text-gray-400 mb-2">Ürün Görseli</label>
+        <label className="block text-sm text-gray-400 mb-2">
+          Ürün Görselleri
+          <span className="text-gray-600 text-xs font-normal ml-2">({images.length} görsel — ilk görsel ana görsel olur)</span>
+        </label>
 
-        {/* Preview / Drop zone */}
+        {/* Thumbnail grid */}
+        {images.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {images.map((url, idx) => (
+              <div key={idx} className="relative w-20 h-20 bg-[#111111] border-2 border-[#3a3a3a] rounded-xl overflow-hidden group">
+                {idx === 0 && (
+                  <span className="absolute top-0.5 left-0.5 z-10 bg-[#E4171E] text-white text-[9px] font-bold px-1 rounded">ANA</span>
+                )}
+                <img src={url} alt={`Görsel ${idx + 1}`} className="w-full h-full object-contain p-1.5" />
+                <button
+                  type="button"
+                  onClick={() => removeImage(idx)}
+                  className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Drop zone */}
         <div
-          className={`w-full aspect-video bg-[#111111] border-2 border-dashed rounded-xl overflow-hidden relative mb-3 transition-colors
-            ${dragOver ? "border-[#E4171E] bg-[#E4171E]/5" : "border-[#3a3a3a]"}`}
+          className={`w-full border-2 border-dashed rounded-xl transition-colors cursor-pointer
+            ${dragOver ? "border-[#E4171E] bg-[#E4171E]/5" : "border-[#3a3a3a] hover:border-[#5a5a5a]"}
+            ${uploading ? "pointer-events-none" : ""}`}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
+          onClick={() => !uploading && fileRef.current?.click()}
         >
-          {uploading ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-              <Loader2 className="w-8 h-8 text-[#E4171E] animate-spin" />
-              <span className="text-gray-500 text-xs">Yükleniyor...</span>
-            </div>
-          ) : form.image ? (
-            <>
-              {/* Plain img — Next.js Image not used here to avoid fill/optimization issues */}
-              <img
-                src={form.image}
-                alt="Ürün görseli"
-                className="w-full h-full object-contain p-4"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  setError("Görsel gösterilemiyor: " + form.image);
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => { set("image", ""); setUploadSuccess(false); }}
-                className="absolute top-2 right-2 bg-black/60 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              {uploadSuccess && (
-                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-green-900/80 text-green-300 text-xs px-2.5 py-1 rounded-full">
-                  <CheckCircle className="w-3.5 h-3.5" /> Yüklendi
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-600">
-              <Upload className="w-8 h-8" />
-              <span className="text-xs">{dragOver ? "Bırak!" : "Görsel sürükle veya aşağıdan seç"}</span>
-            </div>
-          )}
+          <div className="flex flex-col items-center justify-center gap-2 text-gray-500 py-6">
+            {uploading ? (
+              <><Loader2 className="w-7 h-7 text-[#E4171E] animate-spin" /><span className="text-xs">Yükleniyor...</span></>
+            ) : (
+              <><Plus className="w-7 h-7" /><span className="text-xs">{dragOver ? "Bırak!" : "Görsel ekle — sürükle veya tıkla"}</span></>
+            )}
+          </div>
         </div>
 
         {/* Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex gap-2 mt-2">
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex items-center justify-center gap-2 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-3 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-400 text-xs px-3 py-2 rounded-lg transition-colors"
           >
-            <Upload className="w-4 h-4" />
-            Galeriden Seç
+            <Upload className="w-3.5 h-3.5" /> Galeriden Seç
           </button>
           <button
             type="button"
             onClick={() => cameraRef.current?.click()}
-            className="flex items-center justify-center gap-2 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-3 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-400 text-xs px-3 py-2 rounded-lg transition-colors"
           >
-            <Camera className="w-4 h-4" />
-            Kamera ile Çek
+            <Camera className="w-3.5 h-3.5" /> Kamera
           </button>
         </div>
-        <p className="text-gray-600 text-xs mt-2">JPG, PNG, WEBP veya HEIC. Maks. 5MB.</p>
+        <p className="text-gray-600 text-xs mt-1.5">JPG, PNG, WEBP veya HEIC. Birden fazla seçilebilir.</p>
 
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-        {/* capture="environment" opens rear camera directly on mobile */}
+        <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={handleFileChange} />
         <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
       </div>
 
@@ -265,8 +268,6 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
             ))}
           </select>
         </div>
-
-
       </div>
 
       {/* Featured */}
@@ -304,3 +305,4 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     </form>
   );
 }
+

@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, Phone, Tag } from "lucide-react";
+import { ChevronRight, Phone } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import ProductImageGallery from "@/components/ProductImageGallery";
 
 export const revalidate = 60;
 
@@ -23,108 +23,98 @@ export default async function ProductPage({ params }: {
     where: { categoryId: product.categoryId, id: { not: product.id } },
     include: { category: true },
     take: 4,
-    orderBy: { sortOrder: "asc" },
+    orderBy: { createdAt: "asc" },
   });
+
+  const images: string[] = (() => {
+    try { return JSON.parse(product.images || "[]"); } catch { return []; }
+  })();
+  if (images.length === 0 && product.image) images.push(product.image);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-8 flex-wrap">
+      <div className="flex items-center gap-2 text-sm text-gray-400 mb-8 flex-wrap">
         <Link href="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
         <ChevronRight className="w-3 h-3" />
         <Link href="/katalog" className="hover:text-white transition-colors">Katalog</Link>
         <ChevronRight className="w-3 h-3" />
         <Link href={`/katalog/${slug}`} className="hover:text-white transition-colors">{product.category.name}</Link>
         <ChevronRight className="w-3 h-3" />
-        <span className="text-white line-clamp-1">{product.name}</span>
+        <span className="text-gray-200 line-clamp-1">{product.name}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Image */}
-        <div className="bg-[#111111] rounded-2xl border border-[#2a2a2a] aspect-square relative overflow-hidden">
-          {product.image ? (
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              className="object-contain p-10"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              priority
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-700">
-              <span className="text-6xl font-black">DS</span>
+      {/* Product card */}
+      <div className="bg-white rounded-2xl p-6 lg:p-10 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Gallery */}
+          <ProductImageGallery images={images} name={product.name} />
+
+          {/* Details */}
+          <div className="flex flex-col justify-center">
+            <div className="text-xs font-semibold text-[#E4171E] uppercase tracking-widest mb-2">
+              {product.category.name}
             </div>
-          )}
-        </div>
 
-        {/* Details */}
-        <div className="flex flex-col justify-center">
-          {product.subcategory && (
-            <div className="inline-flex items-center gap-1.5 bg-[#E4171E]/10 border border-[#E4171E]/30 text-[#E4171E] text-xs font-semibold px-3 py-1 rounded-full mb-4 w-fit uppercase tracking-wider">
-              <Tag className="w-3 h-3" />
-              {product.subcategory}
+            <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4 leading-tight">{product.name}</h1>
+
+            {product.description && (
+              <p className="text-gray-600 text-base leading-relaxed mb-6">{product.description}</p>
+            )}
+
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
+              <div className="text-gray-500 text-sm mb-1">Fiyat</div>
+              <div className="text-3xl font-black text-[#E4171E]">{formatPrice(product.price)}</div>
+              {product.price == null && (
+                <div className="text-gray-400 text-xs mt-1">Fiyat bilgisi için lütfen arayınız</div>
+              )}
+              {product.stock === 0 && (
+                <div className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-200 text-gray-500">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                  Stok Yok
+                </div>
+              )}
             </div>
-          )}
 
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">{product.name}</h1>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href="tel:05338750515"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#E4171E] hover:bg-[#B5121A] text-white font-semibold py-3.5 rounded-xl transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                0533 875 05 15
+              </a>
+              <a
+                href="tel:05338430645"
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3.5 rounded-xl transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                0533 843 06 45
+              </a>
+            </div>
 
-          {product.description && (
-            <p className="text-gray-400 text-base leading-relaxed mb-6">{product.description}</p>
-          )}
-
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-5 mb-6">
-            <div className="text-gray-500 text-sm mb-1">Fiyat</div>
-            <div className="text-3xl font-black text-[#E4171E]">{formatPrice(product.price)}</div>
-            {product.price == null && (
-              <div className="text-gray-500 text-xs mt-1">Fiyat bilgisi için lütfen arayınız</div>
-            )}
-            {product.stock === 0 && (
-              <div className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-800 text-gray-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
-                Stok Yok
-              </div>
-            )}
+            <p className="text-gray-400 text-xs mt-4 text-center">%100 Orijinal Pioneer — Yetkili Bayi Garantisi</p>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <a
-              href="tel:05338750515"
-              className="flex-1 flex items-center justify-center gap-2 bg-[#E4171E] hover:bg-[#B5121A] text-white font-semibold py-3.5 rounded-xl transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              0533 875 05 15
-            </a>
-            <a
-              href="tel:05338430645"
-              className="flex-1 flex items-center justify-center gap-2 bg-[#1a1a1a] hover:bg-[#2a2a2a] border border-[#3a3a3a] text-white font-semibold py-3.5 rounded-xl transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              0533 843 06 45
-            </a>
-          </div>
-
-          <p className="text-gray-600 text-xs mt-4 text-center">%100 Orijinal Pioneer — Yetkili Bayi Garantisi</p>
         </div>
       </div>
 
       {/* Related */}
       {related.length > 0 && (
-        <div className="mt-20">
+        <div className="mt-4">
           <h2 className="text-2xl font-black text-white mb-6">Benzer Ürünler</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {related.map((p) => (
               <Link key={p.id} href={`/katalog/${p.category.slug}/${p.id}`} className="group">
-                <div className="bg-[#1a1a1a] border border-[#2a2a2a] group-hover:border-[#E4171E]/50 rounded-xl overflow-hidden card-hover">
-                  <div className="aspect-square relative bg-[#111111]">
+                <div className="bg-white border border-gray-200 group-hover:border-[#E4171E]/50 rounded-xl overflow-hidden transition-all group-hover:shadow-md">
+                  <div className="aspect-square relative bg-gray-50">
                     {p.image ? (
-                      <Image src={p.image} alt={p.name} fill className="object-contain p-4" sizes="25vw" />
+                      <img src={p.image} alt={p.name} className="w-full h-full object-contain p-3" />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-700 text-xs">Pioneer</div>
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-200 text-xs font-bold">DS</div>
                     )}
                   </div>
-                  <div className="p-3">
-                    <div className="text-white text-sm font-semibold line-clamp-1 group-hover:text-[#E4171E] transition-colors">{p.name}</div>
+                  <div className="p-3 border-t border-gray-100">
+                    <div className="text-gray-900 text-sm font-semibold line-clamp-1 group-hover:text-[#E4171E] transition-colors">{p.name}</div>
                     <div className="text-[#E4171E] text-sm font-bold mt-1">{formatPrice(p.price)}</div>
                   </div>
                 </div>

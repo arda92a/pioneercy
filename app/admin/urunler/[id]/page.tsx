@@ -23,7 +23,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         <span className="text-white line-clamp-1">{product.name}</span>
       </div>
       <h1 className="text-2xl font-black text-white mb-8">Ürünü Düzenle</h1>
-      <ProductForm categories={categories} initial={{ ...product, description: product.description ?? undefined, image: product.image ?? undefined, stock: product.stock }} />
+      <ProductForm categories={categories} initial={{ ...product, description: product.description ?? undefined, image: product.image ?? undefined, stock: product.stock, images: product.images }} />
     </div>
   );
 }

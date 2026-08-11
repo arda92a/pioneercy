@@ -27,6 +27,7 @@ model Product {
   subcategory String?
   featured    Boolean  @default(false)
   stock       Int      @default(0)
+  images      String   @default("[]")
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
