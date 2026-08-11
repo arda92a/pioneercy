@@ -1,8 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Upload, X, Star, Loader2, Camera } from "lucide-react";
+import { Upload, X, Star, Loader2, Camera, CheckCircle } from "lucide-react";
 
 interface Category {
   id: number;
@@ -44,6 +43,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   function set(field: string, value: string | boolean) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -64,6 +64,8 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     const data = await res.json();
     if (data.url) {
       set("image", data.url);
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 3000);
     } else {
       setError(data.error ?? "Görsel yüklenemedi");
     }
@@ -114,25 +116,39 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
         <label className="block text-sm text-gray-400 mb-2">Ürün Görseli</label>
 
         {/* Preview */}
-        <div className="w-full aspect-video bg-[#111111] border-2 border-dashed border-[#3a3a3a] rounded-xl flex items-center justify-center overflow-hidden relative mb-3">
+        <div className="w-full aspect-video bg-[#111111] border-2 border-dashed border-[#3a3a3a] rounded-xl overflow-hidden relative mb-3">
           {uploading ? (
-            <div className="flex flex-col items-center gap-2">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
               <Loader2 className="w-8 h-8 text-[#E4171E] animate-spin" />
               <span className="text-gray-500 text-xs">Yükleniyor...</span>
             </div>
           ) : form.image ? (
             <>
-              <Image src={form.image} alt="Ürün görseli" fill className="object-contain p-4" />
+              {/* Plain img — Next.js Image not used here to avoid fill/optimization issues */}
+              <img
+                src={form.image}
+                alt="Ürün görseli"
+                className="w-full h-full object-contain p-4"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                  setError("Görsel gösterilemiyor: " + form.image);
+                }}
+              />
               <button
                 type="button"
-                onClick={() => set("image", "")}
+                onClick={() => { set("image", ""); setUploadSuccess(false); }}
                 className="absolute top-2 right-2 bg-black/60 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
+              {uploadSuccess && (
+                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-green-900/80 text-green-300 text-xs px-2.5 py-1 rounded-full">
+                  <CheckCircle className="w-3.5 h-3.5" /> Yüklendi
+                </div>
+              )}
             </>
           ) : (
-            <div className="flex flex-col items-center gap-2 text-gray-600">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-600">
               <Upload className="w-8 h-8" />
               <span className="text-xs">Görsel seç veya kamerayla çek</span>
             </div>
