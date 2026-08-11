@@ -25,13 +25,15 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile toggle */}
-      <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white"
-        onClick={() => setOpen(!open)}
-      >
-        {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
+      {/* Mobile hamburger — only visible when sidebar is closed */}
+      {!open && (
+        <button
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-white"
+          onClick={() => setOpen(true)}
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      )}
 
       {/* Overlay */}
       {open && (
@@ -40,20 +42,29 @@ export default function AdminSidebar() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-[#0d0d0d] border-r border-[#2a2a2a] z-40 flex flex-col
+        fixed top-0 left-0 h-full w-64 bg-[#0d0d0d] border-r border-[#2a2a2a] z-50 flex flex-col
         transition-transform duration-300 lg:translate-x-0
         ${open ? "translate-x-0" : "-translate-x-full"}
       `}>
         {/* Header */}
         <div className="p-5 border-b border-[#2a2a2a]">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-[#E4171E] rounded-lg flex items-center justify-center font-black text-white text-sm">
-              DS
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-[#E4171E] rounded-lg flex items-center justify-center font-black text-white text-sm">
+                DS
+              </div>
+              <div>
+                <div className="text-white font-bold text-sm">D.S. Electronics</div>
+                <div className="text-[#E4171E] text-xs">Admin Paneli</div>
+              </div>
             </div>
-            <div>
-              <div className="text-white font-bold text-sm">D.S. Electronics</div>
-              <div className="text-[#E4171E] text-xs">Admin Paneli</div>
-            </div>
+            {/* Close button inside header — mobile only */}
+            <button
+              className="lg:hidden p-1.5 text-gray-500 hover:text-white transition-colors rounded-lg"
+              onClick={() => setOpen(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
