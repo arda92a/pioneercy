@@ -17,9 +17,7 @@ interface ProductFormProps {
     price?: number | null;
     image?: string | null;
     categoryId?: number;
-    subcategory?: string | null;
     featured?: boolean;
-    sortOrder?: number;
   };
 }
 
@@ -34,9 +32,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     description: initial?.description ?? "",
     price: initial?.price?.toString() ?? "",
     categoryId: initial?.categoryId?.toString() ?? categories[0]?.id?.toString() ?? "",
-    subcategory: initial?.subcategory ?? "",
     featured: initial?.featured ?? false,
-    sortOrder: initial?.sortOrder?.toString() ?? "0",
     image: initial?.image ?? "",
   });
 
@@ -84,9 +80,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
       price: form.price !== "" ? parseFloat(form.price) : null,
       image: form.image || null,
       categoryId: parseInt(form.categoryId),
-      subcategory: form.subcategory || null,
       featured: form.featured,
-      sortOrder: parseInt(form.sortOrder) || 0,
     };
 
     const url = isEdit ? `/api/products/${initial!.id}` : "/api/products";
@@ -237,30 +231,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
           </select>
         </div>
 
-        {/* Subcategory */}
-        <div>
-          <label className="block text-sm text-gray-400 mb-1.5">Alt Kategori</label>
-          <input
-            type="text"
-            value={form.subcategory}
-            onChange={(e) => set("subcategory", e.target.value)}
-            placeholder="Örn: Multimedya, Tweeter, Subwoofer..."
-            className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors"
-          />
-        </div>
 
-        {/* Sort order */}
-        <div>
-          <label className="block text-sm text-gray-400 mb-1.5">Sıralama</label>
-          <input
-            type="number"
-            min="0"
-            value={form.sortOrder}
-            onChange={(e) => set("sortOrder", e.target.value)}
-            className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors"
-          />
-          <p className="text-gray-600 text-xs mt-1">Küçük sayı önce görünür</p>
-        </div>
       </div>
 
       {/* Featured */}

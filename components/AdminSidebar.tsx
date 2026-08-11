@@ -3,13 +3,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon, FolderOpen } from "lucide-react";
 import { useAdminTheme } from "@/components/AdminThemeProvider";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { href: "/admin/urunler", icon: Package, label: "Ürünler" },
   { href: "/admin/urunler/yeni", icon: Plus, label: "Yeni Ürün" },
+  { href: "/admin/kategoriler", icon: FolderOpen, label: "Kategoriler" },
   { href: "/admin/kullanicilar", icon: Users, label: "Kullanıcılar" },
 ];
 

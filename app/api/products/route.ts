@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       ...(featured === "true" ? { featured: true } : {}),
     },
     include: { category: true },
-    orderBy: { sortOrder: "asc" },
+    orderBy: { createdAt: "asc" },
   });
 
   return NextResponse.json(products);
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
 
   const data = await req.json();
-  const { name, description, price, image, categoryId, subcategory, featured, sortOrder } = data;
+  const { name, description, price, image, categoryId, featured } = data;
 
   if (!name || !categoryId) {
     return NextResponse.json({ error: "İsim ve kategori zorunludur" }, { status: 400 });
@@ -38,9 +38,7 @@ export async function POST(req: NextRequest) {
       price: price ? Number(price) : null,
       image: image ? String(image) : null,
       categoryId: Number(categoryId),
-      subcategory: subcategory ? String(subcategory) : null,
       featured: Boolean(featured),
-      sortOrder: sortOrder ? Number(sortOrder) : 0,
     },
     include: { category: true },
   });
