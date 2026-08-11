@@ -34,13 +34,13 @@ export default async function ProductPage({ params }: {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-400 mb-8 flex-wrap animate-fade-in">
-        <Link href="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
-        <ChevronRight className="w-3 h-3" />
-        <Link href="/katalog" className="hover:text-white transition-colors">Katalog</Link>
-        <ChevronRight className="w-3 h-3" />
-        <Link href={`/katalog/${slug}`} className="hover:text-white transition-colors">{product.category.name}</Link>
-        <ChevronRight className="w-3 h-3" />
+      <div className="flex items-center gap-2 text-sm mb-8 flex-wrap animate-fade-in">
+        <Link href="/" className="text-gray-400 hover:text-gray-200 transition-colors">Ana Sayfa</Link>
+        <ChevronRight className="w-3 h-3 text-gray-600" />
+        <Link href="/katalog" className="text-gray-400 hover:text-gray-200 transition-colors">Katalog</Link>
+        <ChevronRight className="w-3 h-3 text-gray-600" />
+        <Link href={`/katalog/${slug}`} className="text-gray-400 hover:text-gray-200 transition-colors">{product.category.name}</Link>
+        <ChevronRight className="w-3 h-3 text-gray-600" />
         <span className="text-gray-200 line-clamp-1">{product.name}</span>
       </div>
 
@@ -93,7 +93,7 @@ export default async function ProductPage({ params }: {
       {/* Related */}
       {related.length > 0 && (
         <div className="mt-4 animate-fade-up anim-delay-4">
-          <h2 className="text-2xl font-black text-white mb-6">Benzer Ürünler</h2>
+          <h2 className="text-2xl font-black text-gray-100 mb-6">Benzer Ürünler</h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {related.map((p) => (
               <Link key={p.id} href={`/katalog/${p.category.slug}/${p.id}`} className="group">
