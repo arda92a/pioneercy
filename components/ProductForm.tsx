@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Upload, X, Star, Loader2 } from "lucide-react";
+import { Upload, X, Star, Loader2, Camera } from "lucide-react";
 
 interface Category {
   id: number;
@@ -27,6 +27,7 @@ interface ProductFormProps {
 export default function ProductForm({ categories, initial }: ProductFormProps) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
   const isEdit = !!initial?.id;
 
   const [form, setForm] = useState({
@@ -128,6 +129,14 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
             >
               {form.image ? "Değiştir" : "Görsel Seç"}
             </button>
+            <button
+              type="button"
+              onClick={() => cameraRef.current?.click()}
+              className="ml-2 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
+              title="Kamera ile çek"
+            >
+              <Camera className="w-4 h-4" /> Kamera
+            </button>
             {form.image && (
               <button
                 type="button"
@@ -141,6 +150,8 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
           </div>
         </div>
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+        {/* capture="environment" opens rear camera directly on mobile */}
+        <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
       </div>
 
       {/* Name */}
