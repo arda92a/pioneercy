@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import ProductForm from "@/components/ProductForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewProductPage() {
   const categories = await prisma.category.findMany({ orderBy: { id: "asc" } });
 

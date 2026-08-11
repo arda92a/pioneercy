@@ -8,7 +8,7 @@ import { useAdminTheme } from "@/components/AdminThemeProvider";
 
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
-  { href: "/admin/urunler", icon: Package, label: "Ürünler" },
+  { href: "/admin/urunler", icon: Package, label: "Ürünler", exact: false, exclude: "/admin/urunler/yeni" },
   { href: "/admin/urunler/yeni", icon: Plus, label: "Yeni Ürün" },
   { href: "/admin/kategoriler", icon: FolderOpen, label: "Kategoriler" },
   { href: "/admin/kullanicilar", icon: Users, label: "Kullanıcılar" },
@@ -19,8 +19,10 @@ export default function AdminSidebar() {
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useAdminTheme();
 
-  function isActive(href: string, exact?: boolean) {
-    return exact ? pathname === href : pathname.startsWith(href);
+  function isActive(href: string, exact?: boolean, exclude?: string) {
+    if (exact) return pathname === href;
+    if (exclude && pathname.startsWith(exclude)) return false;
+    return pathname.startsWith(href);
   }
 
   return (
@@ -72,7 +74,7 @@ export default function AdminSidebar() {
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active = isActive(item.href, item.exact);
+            const active = isActive(item.href, item.exact, "exclude" in item ? item.exclude as string : undefined);
             return (
               <Link
                 key={item.href}
