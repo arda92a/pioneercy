@@ -42,22 +42,19 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   function set(field: string, value: string | boolean) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // Copy file reference before resetting input (required for Android Chrome)
-    const fileCopy = new File([file], file.name, { type: file.type || "image/jpeg" });
-    e.target.value = "";
-    if (fileCopy.size === 0) { setError("Görsel okunamadı, tekrar deneyin"); return; }
+  async function uploadFile(file: File) {
+    if (!file.type.startsWith("image/")) { setError("Sadece görsel dosyaları yüklenebilir"); return; }
+    if (file.size === 0) { setError("Görsel okunamadı, tekrar deneyin"); return; }
     setUploading(true);
     setError("");
     const fd = new FormData();
-    fd.append("file", fileCopy);
+    fd.append("file", file);
     const res = await fetch("/api/upload", { method: "POST", body: fd });
     const data = await res.json();
     if (data.url) {
@@ -68,6 +65,22 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
       setError(data.error ?? "Görsel yüklenemedi");
     }
     setUploading(false);
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Copy file reference before resetting input (required for Android Chrome)
+    const fileCopy = new File([file], file.name, { type: file.type || "image/jpeg" });
+    e.target.value = "";
+    await uploadFile(fileCopy);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadFile(file);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -112,8 +125,14 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
       <div>
         <label className="block text-sm text-gray-400 mb-2">Ürün Görseli</label>
 
-        {/* Preview */}
-        <div className="w-full aspect-video bg-[#111111] border-2 border-dashed border-[#3a3a3a] rounded-xl overflow-hidden relative mb-3">
+        {/* Preview / Drop zone */}
+        <div
+          className={`w-full aspect-video bg-[#111111] border-2 border-dashed rounded-xl overflow-hidden relative mb-3 transition-colors
+            ${dragOver ? "border-[#E4171E] bg-[#E4171E]/5" : "border-[#3a3a3a]"}`}
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+        >
           {uploading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
               <Loader2 className="w-8 h-8 text-[#E4171E] animate-spin" />
@@ -147,7 +166,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-600">
               <Upload className="w-8 h-8" />
-              <span className="text-xs">Görsel seç veya kamerayla çek</span>
+              <span className="text-xs">{dragOver ? "Bırak!" : "Görsel sürükle veya aşağıdan seç"}</span>
             </div>
           )}
         </div>
