@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import Image from "next/image";
 import { Plus, Pencil, Star } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import DeleteProductButton from "@/components/DeleteProductButton";
@@ -8,17 +7,23 @@ import DeleteProductButton from "@/components/DeleteProductButton";
 export const revalidate = 0;
 
 export default async function AdminProductsPage() {
-  const products = await prisma.product.findMany({
-    include: { category: true },
-    orderBy: [{ categoryId: "asc" }, { sortOrder: "asc" }],
+  const categories = await prisma.category.findMany({
+    orderBy: { id: "asc" },
+    include: {
+      products: {
+        orderBy: { createdAt: "asc" },
+      },
+    },
   });
+
+  const totalProducts = categories.reduce((sum, c) => sum + c.products.length, 0);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-black text-white">Ürünler</h1>
-          <p className="text-gray-500 text-sm mt-1">{products.length} ürün</p>
+          <p className="text-gray-500 text-sm mt-1">{totalProducts} ürün</p>
         </div>
         <Link
           href="/admin/urunler/yeni"
@@ -28,71 +33,60 @@ export default async function AdminProductsPage() {
         </Link>
       </div>
 
-      <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#2a2a2a]">
-                <th className="text-left text-xs text-gray-500 font-semibold uppercase tracking-wider px-5 py-3.5">Ürün</th>
-                <th className="text-left text-xs text-gray-500 font-semibold uppercase tracking-wider px-5 py-3.5 hidden sm:table-cell">Kategori</th>
-                <th className="text-left text-xs text-gray-500 font-semibold uppercase tracking-wider px-5 py-3.5 hidden md:table-cell">Alt Kategori</th>
-                <th className="text-left text-xs text-gray-500 font-semibold uppercase tracking-wider px-5 py-3.5">Fiyat</th>
-                <th className="text-left text-xs text-gray-500 font-semibold uppercase tracking-wider px-5 py-3.5 hidden lg:table-cell">Öne Çıkan</th>
-                <th className="px-5 py-3.5"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#2a2a2a]">
-              {products.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center text-gray-600 py-12 text-sm">
-                    Henüz ürün eklenmemiş.{" "}
-                    <Link href="/admin/urunler/yeni" className="text-[#E4171E] hover:underline">İlk ürünü ekle</Link>
-                  </td>
-                </tr>
-              ) : products.map((p) => (
-                <tr key={p.id} className="hover:bg-[#111111] transition-colors">
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-[#111111] rounded-lg overflow-hidden shrink-0">
-                        {p.image ? (
-                          <Image src={p.image} alt={p.name} width={40} height={40} className="w-full h-full object-contain p-1" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-700 text-xs">DS</div>
-                        )}
-                      </div>
-                      <span className="text-white text-sm font-medium line-clamp-1">{p.name}</span>
+      {totalProducts === 0 ? (
+        <div className="text-center py-16 text-gray-600 text-sm">
+          Henüz ürün eklenmemiş.{" "}
+          <Link href="/admin/urunler/yeni" className="text-[#E4171E] hover:underline">İlk ürünü ekle</Link>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {categories.filter((c) => c.products.length > 0).map((cat) => (
+            <div key={cat.id} className="bg-[#111111] border border-[#2a2a2a] rounded-2xl overflow-hidden">
+              {/* Category header */}
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#2a2a2a] bg-[#0d0d0d]">
+                <span className="text-white font-semibold text-sm">{cat.name}</span>
+                <span className="text-gray-600 text-xs">{cat.products.length} ürün</span>
+              </div>
+
+              {/* Products */}
+              <div className="divide-y divide-[#1f1f1f]">
+                {cat.products.map((p) => (
+                  <div key={p.id} className="flex items-center gap-3 px-4 py-3.5">
+                    {/* Thumbnail */}
+                    <div className="w-12 h-12 bg-[#1a1a1a] rounded-lg overflow-hidden shrink-0">
+                      {p.image ? (
+                        <img src={p.image} alt={p.name} className="w-full h-full object-contain p-1" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-700 text-[10px] font-bold">DS</div>
+                      )}
                     </div>
-                  </td>
-                  <td className="px-5 py-3.5 hidden sm:table-cell">
-                    <span className="text-gray-400 text-xs">{p.category.name}</span>
-                  </td>
-                  <td className="px-5 py-3.5 hidden md:table-cell">
-                    {p.subcategory ? (
-                      <span className="bg-[#E4171E]/10 text-[#E4171E] text-xs px-2 py-0.5 rounded-full">{p.subcategory}</span>
-                    ) : <span className="text-gray-600 text-xs">—</span>}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <span className="text-[#E4171E] font-semibold text-sm">{formatPrice(p.price)}</span>
-                  </td>
-                  <td className="px-5 py-3.5 hidden lg:table-cell">
-                    {p.featured ? (
-                      <span className="flex items-center gap-1 text-yellow-400 text-xs"><Star className="w-3 h-3 fill-current" /> Evet</span>
-                    ) : <span className="text-gray-600 text-xs">—</span>}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-2 justify-end">
-                      <Link href={`/admin/urunler/${p.id}`} className="p-1.5 text-gray-400 hover:text-white hover:bg-[#2a2a2a] rounded-lg transition-colors">
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-white text-sm font-medium leading-tight line-clamp-2">{p.name}</span>
+                        {p.featured && <Star className="w-3.5 h-3.5 text-yellow-400 fill-current shrink-0" />}
+                      </div>
+                      <div className="text-[#E4171E] text-xs font-semibold mt-0.5">{formatPrice(p.price)}</div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Link
+                        href={`/admin/urunler/${p.id}`}
+                        className="p-2 text-gray-500 hover:text-white hover:bg-[#2a2a2a] rounded-lg transition-colors"
+                      >
                         <Pencil className="w-4 h-4" />
                       </Link>
                       <DeleteProductButton id={p.id} />
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
