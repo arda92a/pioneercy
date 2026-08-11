@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, Phone } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import ProductImageGallery from "@/components/ProductImageGallery";
 
@@ -34,7 +34,7 @@ export default async function ProductPage({ params }: {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-400 mb-8 flex-wrap">
+      <div className="flex items-center gap-2 text-sm text-gray-400 mb-8 flex-wrap animate-fade-in">
         <Link href="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
         <ChevronRight className="w-3 h-3" />
         <Link href="/katalog" className="hover:text-white transition-colors">Katalog</Link>
@@ -45,13 +45,15 @@ export default async function ProductPage({ params }: {
       </div>
 
       {/* Product card */}
-      <div className="bg-white rounded-2xl p-6 lg:p-10 mb-12">
+      <div className="bg-white rounded-2xl p-6 lg:p-10 mb-12 animate-fade-up anim-delay-1">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Gallery */}
-          <ProductImageGallery images={images} name={product.name} />
+          <div className="animate-scale-in anim-delay-2">
+            <ProductImageGallery images={images} name={product.name} />
+          </div>
 
           {/* Details */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center animate-fade-up anim-delay-3">
             <div className="text-xs font-semibold text-[#E4171E] uppercase tracking-widest mb-2">
               {product.category.name}
             </div>
@@ -59,7 +61,7 @@ export default async function ProductPage({ params }: {
             <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4 leading-tight">{product.name}</h1>
 
             {product.description && (
-              <p className="text-gray-600 text-base leading-relaxed mb-6">{product.description}</p>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6 whitespace-pre-wrap">{product.description}</p>
             )}
 
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
@@ -76,22 +78,12 @@ export default async function ProductPage({ params }: {
               )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href="tel:05338750515"
-                className="flex-1 flex items-center justify-center gap-2 bg-[#E4171E] hover:bg-[#B5121A] text-white font-semibold py-3.5 rounded-xl transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                0533 875 05 15
-              </a>
-              <a
-                href="tel:05338430645"
-                className="flex-1 flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3.5 rounded-xl transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                0533 843 06 45
-              </a>
-            </div>
+            <Link
+              href="/iletisim"
+              className="flex items-center justify-center gap-2 bg-[#E4171E] hover:bg-[#B5121A] text-white font-semibold py-3.5 rounded-xl transition-colors text-sm"
+            >
+              Bize Ulaşın
+            </Link>
 
             <p className="text-gray-400 text-xs mt-4 text-center">%100 Orijinal Pioneer — Yetkili Bayi Garantisi</p>
           </div>
@@ -100,7 +92,7 @@ export default async function ProductPage({ params }: {
 
       {/* Related */}
       {related.length > 0 && (
-        <div className="mt-4">
+        <div className="mt-4 animate-fade-up anim-delay-4">
           <h2 className="text-2xl font-black text-white mb-6">Benzer Ürünler</h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {related.map((p) => (

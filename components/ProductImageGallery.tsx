@@ -26,9 +26,10 @@ export default function ProductImageGallery({ images, name }: Props) {
       {/* Main image */}
       <div className="bg-white rounded-2xl border border-gray-200 aspect-square relative overflow-hidden group">
         <img
+          key={current}
           src={images[current]}
           alt={`${name} - ${current + 1}`}
-          className="w-full h-full object-contain p-8"
+          className="w-full h-full object-contain p-8 animate-fade-in"
         />
 
         {images.length > 1 && (
