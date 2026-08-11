@@ -63,6 +63,8 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     } else {
       setError(data.error ?? "Görsel yüklenemedi");
     }
+    // Reset input so same file can be selected again
+    e.target.value = "";
     setUploading(false);
   }
 
@@ -108,47 +110,54 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
       {/* Image upload */}
       <div>
         <label className="block text-sm text-gray-400 mb-2">Ürün Görseli</label>
-        <div className="flex items-start gap-4">
-          <div
-            className="w-32 h-32 bg-[#111111] border-2 border-dashed border-[#3a3a3a] rounded-xl flex items-center justify-center cursor-pointer hover:border-[#E4171E]/50 transition-colors overflow-hidden relative shrink-0"
-            onClick={() => fileRef.current?.click()}
-          >
-            {uploading ? (
-              <Loader2 className="w-6 h-6 text-[#E4171E] animate-spin" />
-            ) : form.image ? (
-              <Image src={form.image} alt="Ürün görseli" fill className="object-contain p-2" />
-            ) : (
-              <Upload className="w-6 h-6 text-gray-600" />
-            )}
-          </div>
-          <div className="flex-1">
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-2 rounded-xl transition-colors"
-            >
-              {form.image ? "Değiştir" : "Görsel Seç"}
-            </button>
-            <button
-              type="button"
-              onClick={() => cameraRef.current?.click()}
-              className="ml-2 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
-              title="Kamera ile çek"
-            >
-              <Camera className="w-4 h-4" /> Kamera
-            </button>
-            {form.image && (
+
+        {/* Preview */}
+        <div className="w-full aspect-video bg-[#111111] border-2 border-dashed border-[#3a3a3a] rounded-xl flex items-center justify-center overflow-hidden relative mb-3">
+          {uploading ? (
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="w-8 h-8 text-[#E4171E] animate-spin" />
+              <span className="text-gray-500 text-xs">Yükleniyor...</span>
+            </div>
+          ) : form.image ? (
+            <>
+              <Image src={form.image} alt="Ürün görseli" fill className="object-contain p-4" />
               <button
                 type="button"
                 onClick={() => set("image", "")}
-                className="ml-2 text-gray-500 hover:text-red-400 transition-colors"
+                className="absolute top-2 right-2 bg-black/60 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors"
               >
-                <X className="w-4 h-4 inline" /> Kaldır
+                <X className="w-4 h-4" />
               </button>
-            )}
-            <p className="text-gray-600 text-xs mt-2">JPG, PNG veya WEBP. Maks. 5MB.</p>
-          </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-gray-600">
+              <Upload className="w-8 h-8" />
+              <span className="text-xs">Görsel seç veya kamerayla çek</span>
+            </div>
+          )}
         </div>
+
+        {/* Buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="flex items-center justify-center gap-2 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-3 rounded-xl transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            Galeriden Seç
+          </button>
+          <button
+            type="button"
+            onClick={() => cameraRef.current?.click()}
+            className="flex items-center justify-center gap-2 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 text-gray-300 text-sm px-4 py-3 rounded-xl transition-colors"
+          >
+            <Camera className="w-4 h-4" />
+            Kamera ile Çek
+          </button>
+        </div>
+        <p className="text-gray-600 text-xs mt-2">JPG, PNG, WEBP veya HEIC. Maks. 5MB.</p>
+
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         {/* capture="environment" opens rear camera directly on mobile */}
         <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />

@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
 
   if (!file) return NextResponse.json({ error: "Dosya bulunamadı" }, { status: 400 });
 
-  const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-  if (!allowed.includes(file.type)) {
-    return NextResponse.json({ error: "Sadece JPG, PNG, WEBP veya GIF yüklenebilir" }, { status: 400 });
+  // Accept all image types including HEIC from iOS camera
+  if (!file.type.startsWith("image/")) {
+    return NextResponse.json({ error: "Sadece görsel dosyaları yüklenebilir" }, { status: 400 });
   }
 
   if (file.size > 5 * 1024 * 1024) {
