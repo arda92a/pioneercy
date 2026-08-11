@@ -79,6 +79,14 @@ export default async function ProductPage({ params }: {
             {product.price == null && (
               <div className="text-gray-500 text-xs mt-1">Fiyat bilgisi için lütfen arayınız</div>
             )}
+            <div className={`inline-flex items-center gap-1.5 mt-3 text-xs font-semibold px-2.5 py-1 rounded-full ${
+              product.stock === 0
+                ? "bg-gray-800 text-gray-400"
+                : "bg-green-900/40 text-green-400"
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${product.stock === 0 ? "bg-gray-500" : "bg-green-400"}`} />
+              {product.stock === 0 ? "Stok Yok" : `${product.stock} adet stokta`}
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">

@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
 
   const data = await req.json();
-  const { name, description, price, image, categoryId, featured } = data;
+  const { name, description, price, image, categoryId, featured, stock } = data;
 
   if (!name || !categoryId) {
     return NextResponse.json({ error: "İsim ve kategori zorunludur" }, { status: 400 });
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
       image: image ? String(image) : null,
       categoryId: Number(categoryId),
       featured: Boolean(featured),
+      stock: stock !== undefined ? Number(stock) : 0,
     },
     include: { category: true },
   });

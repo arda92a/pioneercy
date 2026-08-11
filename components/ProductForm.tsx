@@ -18,6 +18,7 @@ interface ProductFormProps {
     image?: string | null;
     categoryId?: number;
     featured?: boolean;
+    stock?: number;
   };
 }
 
@@ -33,6 +34,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     price: initial?.price?.toString() ?? "",
     categoryId: initial?.categoryId?.toString() ?? categories[0]?.id?.toString() ?? "",
     featured: initial?.featured ?? false,
+    stock: initial?.stock?.toString() ?? "0",
     image: initial?.image ?? "",
   });
 
@@ -81,6 +83,7 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
       image: form.image || null,
       categoryId: parseInt(form.categoryId),
       featured: form.featured,
+      stock: parseInt(form.stock) || 0,
     };
 
     const url = isEdit ? `/api/products/${initial!.id}` : "/api/products";
@@ -214,6 +217,19 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
             className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors"
           />
           <p className="text-gray-600 text-xs mt-1">Boş bırakılırsa &quot;Fiyat sorunuz&quot; görünür</p>
+        </div>
+
+        {/* Stock */}
+        <div>
+          <label className="block text-sm text-gray-400 mb-1.5">Stok Adedi</label>
+          <input
+            type="number"
+            min="0"
+            value={form.stock}
+            onChange={(e) => set("stock", e.target.value)}
+            className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors"
+          />
+          <p className="text-gray-600 text-xs mt-1">0 girilirse katalogda &quot;Stok Yok&quot; yazılır</p>
         </div>
 
         {/* Category */}
