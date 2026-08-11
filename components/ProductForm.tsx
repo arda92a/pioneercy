@@ -52,10 +52,14 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Copy file reference before resetting input (required for Android Chrome)
+    const fileCopy = new File([file], file.name, { type: file.type || "image/jpeg" });
+    e.target.value = "";
+    if (fileCopy.size === 0) { setError("Görsel okunamadı, tekrar deneyin"); return; }
     setUploading(true);
     setError("");
     const fd = new FormData();
-    fd.append("file", file);
+    fd.append("file", fileCopy);
     const res = await fetch("/api/upload", { method: "POST", body: fd });
     const data = await res.json();
     if (data.url) {
@@ -63,8 +67,6 @@ export default function ProductForm({ categories, initial }: ProductFormProps) {
     } else {
       setError(data.error ?? "Görsel yüklenemedi");
     }
-    // Reset input so same file can be selected again
-    e.target.value = "";
     setUploading(false);
   }
 
