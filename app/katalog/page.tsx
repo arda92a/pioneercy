@@ -27,12 +27,12 @@ export default async function KatalogPage() {
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-          <Link href="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
+          <Link href="/" className="hover:text-gray-900 transition-colors">Ana Sayfa</Link>
           <ChevronRight className="w-3 h-3" />
-          <span className="text-white">Katalog</span>
+          <span className="text-gray-900 font-medium">Katalog</span>
         </div>
-        <h1 className="text-4xl font-black text-white mb-3">Ürün Kataloğu</h1>
-        <p className="text-gray-400">Pioneer&apos;ın tüm araç ses ekipmanları</p>
+        <h1 className="text-4xl font-black text-gray-900 mb-3">Ürün Katalŏğu</h1>
+        <p className="text-gray-600">Pioneer&apos;ın tüm araç ses ekipmanları</p>
       </div>
 
       {/* Category sections */}
@@ -48,8 +48,8 @@ export default async function KatalogPage() {
                     <Icon className="w-5 h-5 text-[#E4171E]" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white">{cat.name}</h2>
-                    {meta && <p className="text-gray-500 text-sm">{meta.desc}</p>}
+                    <h2 className="text-xl font-bold text-gray-900">{cat.name}</h2>
+                    {meta && <p className="text-gray-600 text-sm">{meta.desc}</p>}
                   </div>
                 </div>
                 <Link
@@ -61,7 +61,7 @@ export default async function KatalogPage() {
               </div>
 
               {cat.products.length === 0 ? (
-                <div className="border border-dashed border-[#2a2a2a] rounded-xl py-10 text-center text-gray-600 text-sm">
+                <div className="border border-dashed border-gray-300 rounded-xl py-10 text-center text-gray-500 text-sm">
                   Bu kategoride henüz ürün bulunmuyor.
                 </div>
               ) : (

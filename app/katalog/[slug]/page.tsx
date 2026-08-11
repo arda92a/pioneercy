@@ -42,17 +42,17 @@ export default async function CategoryPage({ params, searchParams }: {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-        <Link href="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
+        <Link href="/" className="hover:text-gray-900 transition-colors">Ana Sayfa</Link>
         <ChevronRight className="w-3 h-3" />
-        <Link href="/katalog" className="hover:text-white transition-colors">Katalog</Link>
+        <Link href="/katalog" className="hover:text-gray-900 transition-colors">Katalog</Link>
         <ChevronRight className="w-3 h-3" />
-        <span className="text-white">{category.name}</span>
+        <span className="text-gray-900 font-medium">{category.name}</span>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-white">{category.name}</h1>
-          <p className="text-gray-500 mt-1">{category.products.length} ürün listeleniyor</p>
+          <h1 className="text-3xl font-black text-gray-900">{category.name}</h1>
+          <p className="text-gray-600 mt-1">{category.products.length} ürün listeleniyor</p>
         </div>
 
         {/* Subcategory filter */}
@@ -61,7 +61,7 @@ export default async function CategoryPage({ params, searchParams }: {
             <Link
               href={`/katalog/${slug}`}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                !sub ? "bg-[#E4171E] text-white" : "bg-[#1a1a1a] text-gray-400 hover:text-white border border-[#2a2a2a]"
+                !sub ? "bg-[#E4171E] text-white" : "bg-white text-gray-600 hover:text-gray-900 border border-gray-300"
               }`}
             >
               Tümü
@@ -71,7 +71,7 @@ export default async function CategoryPage({ params, searchParams }: {
                 key={s}
                 href={`/katalog/${slug}?sub=${encodeURIComponent(s)}`}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                  sub === s ? "bg-[#E4171E] text-white" : "bg-[#1a1a1a] text-gray-400 hover:text-white border border-[#2a2a2a]"
+                  sub === s ? "bg-[#E4171E] text-white" : "bg-white text-gray-600 hover:text-gray-900 border border-gray-300"
                 }`}
               >
                 {s}
@@ -82,7 +82,7 @@ export default async function CategoryPage({ params, searchParams }: {
       </div>
 
       {category.products.length === 0 ? (
-        <div className="border border-dashed border-[#2a2a2a] rounded-xl py-20 text-center">
+        <div className="border border-dashed border-gray-300 rounded-xl py-20 text-center">
           <p className="text-gray-500">Bu kategoride henüz ürün bulunmuyor.</p>
           <Link href="/katalog" className="text-[#E4171E] text-sm mt-2 inline-block hover:underline">
             Tüm kataloğa dön

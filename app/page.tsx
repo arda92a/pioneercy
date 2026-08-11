@@ -102,8 +102,8 @@ export default async function HomePage() {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">Ürün Kategorileri</h2>
-          <p className="text-gray-400">Pioneer&apos;ın tüm araç ses ekipmanlarını keşfedin</p>
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">Ürün Kategorileri</h2>
+          <p className="text-gray-600">Pioneer&apos;ın tüm araç ses ekipmanlarını keşfedin</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((cat) => {
@@ -133,8 +133,8 @@ export default async function HomePage() {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white">Öne Çıkan Ürünler</h2>
-              <p className="text-gray-400 mt-1">En çok tercih edilen Pioneer ürünleri</p>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-900">Öne Çıkan Ürünler</h2>
+              <p className="text-gray-600 mt-1">En çok tercih edilen Pioneer ürünleri</p>
             </div>
             <Link href="/katalog" className="hidden sm:flex items-center gap-1 text-[#E4171E] hover:text-[#B5121A] text-sm font-medium transition-colors">
               Tümünü Gör <ChevronRight className="w-4 h-4" />

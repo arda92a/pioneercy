@@ -12,7 +12,7 @@ export default function NavbarWrapper({ children }: { children: React.ReactNode 
   return (
     <>
       <Navbar />
-      <main className="flex-1 bg-[#0d0d0d]">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </>
   );

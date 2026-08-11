@@ -63,8 +63,8 @@ html {
 }
 
 body {
-  background-color: var(--pioneer-black);
-  color: #f0f0f0;
+  background-color: #ffffff;
+  color: #111111;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 

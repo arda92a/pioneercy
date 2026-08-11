@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr" className="h-full">
-      <body className={`${inter.className} min-h-full flex flex-col bg-[#0d0d0d] text-white`}>
+      <body className={`${inter.className} min-h-full flex flex-col bg-white text-gray-900`}>
         <NavbarWrapper>{children}</NavbarWrapper>
       </body>
     </html>
