@@ -2,8 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [],
-    remotePatterns: [],
+    // Uploads are served directly by Nginx; skip Next.js optimization pipeline
+    unoptimized: true,
   },
   // Allow serving uploaded images from /public/uploads
   async headers() {
