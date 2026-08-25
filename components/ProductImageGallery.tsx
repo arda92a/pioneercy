@@ -67,7 +67,7 @@ export default function ProductImageGallery({ images, name }: Props) {
     <div>
       {/* Main image */}
       <div
-        className="bg-white rounded-2xl border border-gray-200 aspect-square relative overflow-hidden group cursor-zoom-in"
+        className="bg-white rounded-2xl border border-gray-200 aspect-square relative overflow-hidden group cursor-pointer"
         onClick={() => setLightboxOpen(true)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -140,7 +140,7 @@ export default function ProductImageGallery({ images, name }: Props) {
             src={images[current]}
             alt={`${name} - ${current + 1}`}
             onClick={(e) => e.stopPropagation()}
-            className={`max-w-[92vw] max-h-[85vh] object-contain select-none ${dir === "right" ? "animate-slide-right" : "animate-slide-left"}`}
+            className={`max-w-[75vw] max-h-[70vh] object-contain select-none ${dir === "right" ? "animate-slide-right" : "animate-slide-left"}`}
           />
 
           {images.length > 1 && (
