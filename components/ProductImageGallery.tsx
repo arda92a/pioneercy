@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface Props {
@@ -11,7 +12,10 @@ export default function ProductImageGallery({ images, name }: Props) {
   const [current, setCurrent] = useState(0);
   const [dir, setDir] = useState<"right" | "left">("right");
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => setMounted(true), []);
 
   function prev() {
     setDir("left");
@@ -114,10 +118,11 @@ export default function ProductImageGallery({ images, name }: Props) {
         </div>
       )}
 
-      {/* Lightbox */}
-      {lightboxOpen && (
+      {/* Lightbox — rendered through a portal so it always covers the full viewport,
+          regardless of any transformed/animated ancestor creating a containing block */}
+      {mounted && lightboxOpen && createPortal(
         <div
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center animate-fade-in"
+          className="fixed inset-0 z-[999] bg-black/95 flex items-center justify-center animate-fade-in"
           onClick={() => setLightboxOpen(false)}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
@@ -159,7 +164,8 @@ export default function ProductImageGallery({ images, name }: Props) {
               </div>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
