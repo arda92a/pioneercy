@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, Phone } from "lucide-react";
 
 const navLinks = [
@@ -12,11 +12,31 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 20);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0d0d0d]/95 backdrop-blur-sm border-b border-[#2a2a2a]">
+    <header
+      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+        scrolled
+          ? "bg-[#0d0d0d]/40 backdrop-blur-md border-transparent"
+          : "bg-[#0d0d0d]/95 backdrop-blur-sm border-[#2a2a2a]"
+      }`}
+    >
       {/* Top bar */}
-      <div className="bg-[#E4171E] py-1.5 px-4 text-center text-xs text-white font-medium tracking-wide">
+      <div
+        className={`bg-[#E4171E] px-4 text-center text-xs text-white font-medium tracking-wide overflow-hidden transition-all duration-300 ${
+          scrolled ? "max-h-0 py-0 opacity-0" : "max-h-10 py-1.5 opacity-100"
+        }`}
+      >
         Pioneer Kıbrıs Yetkili Ana Bayii — D.S. Electronics
       </div>
 
