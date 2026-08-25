@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
+import HeroSlider, { HeroSlide } from "@/components/HeroSlider";
 import { ChevronRight, Cpu, Speaker, Zap, Star, Phone, MapPin } from "lucide-react";
 
 const categories = [
@@ -29,6 +30,37 @@ const categories = [
 
 export const revalidate = 60;
 
+// Assigns a random product image as a category's cover image the first time
+// it's needed; once set, the image stays fixed until an admin changes it.
+async function ensureCategoryImage(category: {
+  id: number;
+  slug: string;
+  image: string | null;
+}): Promise<string | null> {
+  if (category.image) return category.image;
+
+  const products = await prisma.product.findMany({
+    where: { categoryId: category.id },
+    select: { image: true, images: true },
+  });
+
+  const candidates: string[] = [];
+  for (const p of products) {
+    try {
+      const arr = JSON.parse(p.images || "[]");
+      if (Array.isArray(arr)) candidates.push(...arr.filter((u): u is string => typeof u === "string" && !!u));
+    } catch {
+      // ignore malformed images JSON
+    }
+    if (p.image) candidates.push(p.image);
+  }
+  if (candidates.length === 0) return null;
+
+  const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+  await prisma.category.update({ where: { id: category.id }, data: { image: chosen } });
+  return chosen;
+}
+
 export default async function HomePage() {
   const featuredProducts = await prisma.product.findMany({
     where: { featured: true },
@@ -37,58 +69,74 @@ export default async function HomePage() {
     orderBy: { sortOrder: "asc" },
   });
 
-  const categoryCounts = await prisma.category.findMany({
+  const allCategories = await prisma.category.findMany({
     include: { _count: { select: { products: true } } },
+    orderBy: { id: "asc" },
   });
 
-  const countMap = Object.fromEntries(categoryCounts.map((c) => [c.slug, c._count.products]));
+  const countMap = Object.fromEntries(allCategories.map((c) => [c.slug, c._count.products]));
+
+  const heroSlides: HeroSlide[] = (
+    await Promise.all(
+      allCategories.map(async (c) => ({
+        slug: c.slug,
+        name: c.name,
+        description: c.description,
+        image: await ensureCategoryImage(c),
+      }))
+    )
+  ).filter((s): s is HeroSlide => !!s.image);
 
   return (
     <>
-      <section className="relative min-h-[85vh] flex items-center pioneer-gradient overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `linear-gradient(#E4171E 1px, transparent 1px), linear-gradient(to right, #E4171E 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
-        <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[#E4171E]/5 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#E4171E]/50 to-transparent" />
+      {heroSlides.length > 0 ? (
+        <HeroSlider slides={heroSlides} />
+      ) : (
+        <section className="relative min-h-[85vh] flex items-center pioneer-gradient overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-5"
+            style={{
+              backgroundImage: `linear-gradient(#E4171E 1px, transparent 1px), linear-gradient(to right, #E4171E 1px, transparent 1px)`,
+              backgroundSize: "60px 60px",
+            }}
+          />
+          <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[#E4171E]/5 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#E4171E]/50 to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-[#E4171E]/10 border border-[#E4171E]/30 rounded-full px-4 py-1.5 text-[#E4171E] text-sm font-medium mb-6">
-              <Star className="w-3.5 h-3.5 fill-current" />
-              Kıbrıs Pioneer Yetkili Ana Bayii
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
-              Araç Sesinizi{" "}
-              <span className="text-[#E4171E]">Yeniden</span>{" "}
-              Keşfedin
-            </h1>
-            <p className="text-gray-400 text-lg leading-relaxed mb-8">
-              D.S. Electronics olarak KKTC&apos;de Pioneer&apos;ın resmi yetkili ana bayii olarak
-              en son oto teyp, hoparlör ve amplifikatör sistemlerini sunuyoruz.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/katalog"
-                className="inline-flex items-center gap-2 bg-[#E4171E] hover:bg-[#B5121A] text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-sm"
-              >
-                Kataloğu Gör
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/iletisim"
-                className="inline-flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white border border-[#3a3a3a] font-semibold px-8 py-3.5 rounded-xl transition-colors text-sm"
-              >
-                İletişime Geç
-              </Link>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-[#E4171E]/10 border border-[#E4171E]/30 rounded-full px-4 py-1.5 text-[#E4171E] text-sm font-medium mb-6">
+                <Star className="w-3.5 h-3.5 fill-current" />
+                Kıbrıs Pioneer Yetkili Ana Bayii
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                Araç Sesinizi{" "}
+                <span className="text-[#E4171E]">Yeniden</span>{" "}
+                Keşfedin
+              </h1>
+              <p className="text-gray-400 text-lg leading-relaxed mb-8">
+                D.S. Electronics olarak KKTC&apos;de Pioneer&apos;ın resmi yetkili ana bayii olarak
+                en son oto teyp, hoparlör ve amplifikatör sistemlerini sunuyoruz.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/katalog"
+                  className="inline-flex items-center gap-2 bg-[#E4171E] hover:bg-[#B5121A] text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-sm"
+                >
+                  Kataloğu Gör
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/iletisim"
+                  className="inline-flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white border border-[#3a3a3a] font-semibold px-8 py-3.5 rounded-xl transition-colors text-sm"
+                >
+                  İletişime Geç
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="bg-[#E4171E] py-4">
         <div className="max-w-7xl mx-auto px-4">

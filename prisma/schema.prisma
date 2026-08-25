@@ -13,6 +13,7 @@ model Category {
   name        String
   slug        String    @unique
   description String?
+  image       String?
   products    Product[]
 }
 

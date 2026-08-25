@@ -8,7 +8,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!session) return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
 
   const { id } = await params;
-  const { name, description } = await req.json();
+  const { name, description, image } = await req.json();
   if (!name) return NextResponse.json({ error: "Kategori adı zorunludur" }, { status: 400 });
 
   const category = await prisma.category.update({
@@ -16,6 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     data: {
       name: String(name),
       description: description ? String(description) : null,
+      ...(image !== undefined ? { image: image ? String(image) : null } : {}),
     },
   });
   return NextResponse.json(category);
