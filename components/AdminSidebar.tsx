@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
@@ -53,8 +54,8 @@ export default function AdminSidebar() {
         <div className="p-5 border-b border-[#2a2a2a]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-[#E4171E] rounded-lg flex items-center justify-center font-black text-white text-sm">
-                DS
+              <div className="w-9 h-9 rounded-lg overflow-hidden">
+                <Image src="/logo.jpg" alt="D.S. Electronics" width={36} height={36} className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="text-white font-bold text-sm">D.S. Electronics</div>

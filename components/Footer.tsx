@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Phone, Mail } from "lucide-react";
 
 export default function Footer() {
@@ -9,8 +10,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-[#E4171E] rounded-lg flex items-center justify-center font-black text-white text-lg">
-                DS
+              <div className="w-10 h-10 rounded-lg overflow-hidden">
+                <Image src="/logo.jpg" alt="D.S. Electronics" width={40} height={40} className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="text-white font-bold text-base">D.S. Electronics</div>
