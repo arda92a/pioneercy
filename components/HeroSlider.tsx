@@ -38,12 +38,15 @@ export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
     >
       {/* Background slides */}
       {slides.map((s, i) => (
-        <div
+        <Link
           key={s.slug}
+          href={`/katalog/${s.slug}`}
+          aria-label={`${s.name} kategorisine git`}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
             i === index ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           aria-hidden={i !== index}
+          tabIndex={i === index ? 0 : -1}
         >
           <Image
             src={s.image}
@@ -57,7 +60,7 @@ export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/75 to-[#0d0d0d]/40" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d0d]/80 via-[#0d0d0d]/30 to-transparent" />
-        </div>
+        </Link>
       ))}
 
       {/* Grid overlay */}

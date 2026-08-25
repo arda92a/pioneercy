@@ -2,31 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/ProductCard";
 import HeroSlider, { HeroSlide } from "@/components/HeroSlider";
-import { ChevronRight, Cpu, Speaker, Zap, Star, Phone, MapPin } from "lucide-react";
-
-const categories = [
-  {
-    slug: "oto-teyp",
-    name: "Oto Teyp & Multimedya",
-    desc: "Apple CarPlay, Android Auto ve 4K dokunmatik ekranlı multimedya sistemleri",
-    icon: Cpu,
-    gradient: "from-blue-900/20 to-[#1a1a1a]",
-  },
-  {
-    slug: "hoparlor",
-    name: "Hoparlör & Tweeter",
-    desc: "Kristal netliğinde ses için component ve koaksiyel hoparlör sistemleri",
-    icon: Speaker,
-    gradient: "from-green-900/20 to-[#1a1a1a]",
-  },
-  {
-    slug: "amplifikator",
-    name: "Amplifikatör & Subwoofer",
-    desc: "Güçlü bas ve yüksek güç çıkışı için amfi ve subwoofer grupları",
-    icon: Zap,
-    gradient: "from-[#E4171E]/10 to-[#1a1a1a]",
-  },
-];
+import { ChevronRight, Star, Phone, MapPin } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -73,8 +49,6 @@ export default async function HomePage() {
     include: { _count: { select: { products: true } } },
     orderBy: { id: "asc" },
   });
-
-  const countMap = Object.fromEntries(allCategories.map((c) => [c.slug, c._count.products]));
 
   const heroSlides: HeroSlide[] = (
     await Promise.all(
@@ -141,39 +115,10 @@ export default async function HomePage() {
       <section className="bg-[#E4171E] py-4">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-3 gap-4 text-center text-white">
-            <div><div className="font-black text-2xl sm:text-3xl">3</div><div className="text-xs sm:text-sm opacity-80">Kategori</div></div>
+            <div><div className="font-black text-2xl sm:text-3xl">{allCategories.length}</div><div className="text-xs sm:text-sm opacity-80">Kategori</div></div>
             <div><div className="font-black text-2xl sm:text-3xl">%100</div><div className="text-xs sm:text-sm opacity-80">Orijinal Ürün</div></div>
             <div><div className="font-black text-2xl sm:text-3xl">Yetkili</div><div className="text-xs sm:text-sm opacity-80">Ana Bayi</div></div>
           </div>
-        </div>
-      </section>
-
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">Ürün Kategorileri</h2>
-          <p className="text-gray-600">Pioneer&apos;ın tüm araç ses ekipmanlarını keşfedin</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            return (
-              <Link key={cat.slug} href={`/katalog/${cat.slug}`} className="group">
-                <div className={`bg-gradient-to-br ${cat.gradient} border border-[#2a2a2a] group-hover:border-[#E4171E]/50 rounded-2xl p-7 h-full card-hover`}>
-                  <div className="w-12 h-12 bg-[#E4171E]/10 border border-[#E4171E]/20 rounded-xl flex items-center justify-center mb-5 group-hover:bg-[#E4171E]/20 transition-colors">
-                    <Icon className="w-6 h-6 text-[#E4171E]" />
-                  </div>
-                  <h3 className="text-white font-bold text-lg mb-2 group-hover:text-[#E4171E] transition-colors">{cat.name}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-4">{cat.desc}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-xs">{countMap[cat.slug] ?? 0} ürün</span>
-                    <span className="text-[#E4171E] text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Gör <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
         </div>
       </section>
 
