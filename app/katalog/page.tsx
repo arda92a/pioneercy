@@ -31,7 +31,7 @@ export default async function KatalogPage() {
           <ChevronRight className="w-3 h-3" />
           <span className="text-gray-900 font-medium">Katalog</span>
         </div>
-        <h1 className="text-4xl font-black text-gray-900 mb-3">Ürün Katalŏğu</h1>
+        <h1 className="text-4xl font-black text-gray-900 mb-3">Ürün Kataloğu</h1>
         <p className="text-gray-600">Pioneer&apos;ın tüm araç ses ekipmanları</p>
       </div>
 
