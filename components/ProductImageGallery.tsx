@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface Props {
   images: string[];
@@ -74,11 +74,6 @@ export default function ProductImageGallery({ images, name }: Props) {
           alt={`${name} - ${current + 1}`}
           className={`w-full h-full object-contain p-8 ${dir === "right" ? "animate-slide-right" : "animate-slide-left"}`}
         />
-
-        {/* Zoom hint */}
-        <div className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-          <ZoomIn className="w-4 h-4" />
-        </div>
 
         {images.length > 1 && (
           <>
