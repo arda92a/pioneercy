@@ -48,15 +48,25 @@ export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           aria-hidden={i !== index}
           tabIndex={i === index ? 0 : -1}
         >
+          {/* Blurred fill backdrop so the frame never looks empty */}
+          <Image
+            src={s.image}
+            alt=""
+            fill
+            aria-hidden
+            sizes="100vw"
+            className={`object-cover scale-125 blur-2xl opacity-50 transition-transform duration-[6000ms] ease-out ${
+              i === index ? "scale-150" : "scale-125"
+            }`}
+          />
+          {/* Full product photo, never cropped */}
           <Image
             src={s.image}
             alt={s.name}
             fill
             priority={i === 0}
             sizes="100vw"
-            className={`object-cover transition-transform duration-[6000ms] ease-out ${
-              i === index ? "scale-110" : "scale-100"
-            }`}
+            className="object-contain"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/75 to-[#0d0d0d]/40" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d0d]/80 via-[#0d0d0d]/30 to-transparent" />
