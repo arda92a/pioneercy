@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Check, X, Loader2, Image as ImageIcon } from "lucide-react";
 
@@ -14,12 +14,9 @@ interface Category {
 
 export default function CategoryList({ categories }: { categories: Category[] }) {
   const router = useRouter();
-  const fileRef = useRef<HTMLInputElement>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [editDesc, setEditDesc] = useState("");
-  const [editImage, setEditImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -28,28 +25,12 @@ export default function CategoryList({ categories }: { categories: Category[] })
     setEditingId(cat.id);
     setEditName(cat.name);
     setEditDesc(cat.description ?? "");
-    setEditImage(cat.image ?? null);
     setError("");
   }
 
   function cancelEdit() {
     setEditingId(null);
     setError("");
-  }
-
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    setUploading(true);
-    setError("");
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    setUploading(false);
-    if (data.url) setEditImage(data.url);
-    else setError(data.error ?? "Görsel yüklenemedi");
   }
 
   async function saveEdit(id: number) {
@@ -59,7 +40,7 @@ export default function CategoryList({ categories }: { categories: Category[] })
     const res = await fetch(`/api/categories/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: editName.trim(), description: editDesc.trim() || null, image: editImage }),
+      body: JSON.stringify({ name: editName.trim(), description: editDesc.trim() || null }),
     });
     const data = await res.json();
     setSaving(false);
@@ -119,25 +100,6 @@ export default function CategoryList({ categories }: { categories: Category[] })
                 placeholder="Açıklama (opsiyonel)"
                 className="w-full bg-[#0d0d0d] border border-[#3a3a3a] text-white placeholder-gray-600 rounded-lg px-3 py-2 text-sm outline-none"
               />
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-16 shrink-0 bg-[#0d0d0d] border border-[#3a3a3a] rounded-lg overflow-hidden flex items-center justify-center">
-                  {editImage ? (
-                    <img src={editImage} alt="Kapak görseli" className="w-full h-full object-cover" />
-                  ) : (
-                    <ImageIcon className="w-5 h-5 text-gray-700" />
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  disabled={uploading}
-                  className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#3a3a3a] hover:border-[#E4171E]/50 disabled:opacity-50 text-gray-400 text-xs px-3 py-2 rounded-lg transition-colors"
-                >
-                  {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
-                  {uploading ? "Yükleniyor..." : "Ana Sayfa Görseli Seç"}
-                </button>
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-              </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => saveEdit(cat.id)}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon, FolderOpen } from "lucide-react";
+import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon, FolderOpen, Image as ImageIcon } from "lucide-react";
 import { useAdminTheme } from "@/components/AdminThemeProvider";
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/admin/urunler", icon: Package, label: "Ürünler", exact: false, exclude: "/admin/urunler/yeni" },
   { href: "/admin/urunler/yeni", icon: Plus, label: "Yeni Ürün" },
   { href: "/admin/kategoriler", icon: FolderOpen, label: "Kategoriler" },
+  { href: "/admin/anasayfa", icon: ImageIcon, label: "Ana Sayfa Görselleri" },
   { href: "/admin/kullanicilar", icon: Users, label: "Kullanıcılar" },
 ];
 
