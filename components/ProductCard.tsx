@@ -34,8 +34,8 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
           {outOfStock && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                Stok Yok
+              <span className="bg-black/60 text-[#E4171E] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                Sipariş Ver
               </span>
             </div>
           )}
@@ -51,7 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
           <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
             <span className="text-[#E4171E] font-bold text-base">{formatPrice(product.price)}</span>
-            {outOfStock && <span className="text-gray-400 text-xs">Stok Yok</span>}
+            {outOfStock && <span className="text-[#E4171E] text-xs font-semibold">Sipariş Ver</span>}
           </div>
         </div>
       </div>

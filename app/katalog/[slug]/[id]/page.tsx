@@ -71,9 +71,9 @@ export default async function ProductPage({ params }: {
                 <div className="text-gray-400 text-xs mt-1">Fiyat bilgisi için lütfen arayınız</div>
               )}
               {product.stock === 0 && (
-                <div className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-200 text-gray-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                  Stok Yok
+                <div className="inline-flex items-center gap-1.5 mt-3 text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-[#E4171E]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#E4171E]" />
+                  Sipariş Ver
                 </div>
               )}
             </div>
