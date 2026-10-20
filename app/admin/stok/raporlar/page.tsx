@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { Download } from "lucide-react";
 import { addTo, customerBalances, nonZero, type CurrencyTotals } from "@/lib/stok/queries";
 import { formatDateTime, formatDay, formatMoney, todayText } from "@/lib/stok/format";
-import { Badge, Card, Empty, PageHeader, Stat, Table, Totals, btnPrimary, btnSecondary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import { Badge, Card, Empty, PageHeader, Stat, Table, Totals, btnPrimary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import AutoFilterForm from "@/components/stok/AutoFilterForm";
 
 const TABS = [
   ["ozet", "Özet"], ["urun", "Ürün bazlı satışlar"], ["bakiye", "Cari bakiyeler"], ["kritik", "Kritik stok"], ["hareket", "Stok hareketleri"],
@@ -105,15 +106,14 @@ async function ProductSales({ marka = "", model = "", yil = "", baslangic = "", 
 
   return (
     <Card padded={false}>
-      <form className="grid grid-cols-2 md:grid-cols-[1fr_1fr_120px_160px_160px_auto] gap-3 p-4 border-b border-[#2a2a2a]">
+      <AutoFilterForm className="grid grid-cols-2 md:grid-cols-[1fr_1fr_120px_170px_170px] gap-3 p-4 border-b border-[#2a2a2a]">
         <input type="hidden" name="bolum" value="urun" />
         <input name="marka" defaultValue={marka} placeholder="Marka" className={inputCls} />
         <input name="model" defaultValue={model} placeholder="Model" className={inputCls} />
         <input name="yil" defaultValue={yil} placeholder="Araç yılı" className={inputCls} />
         <input type="date" name="baslangic" defaultValue={baslangic} className={inputCls} aria-label="Başlangıç" />
         <input type="date" name="bitis" defaultValue={bitis} className={inputCls} aria-label="Bitiş" />
-        <button className={btnSecondary}>Filtrele</button>
-      </form>
+      </AutoFilterForm>
       <div className="px-5 py-3 text-sm text-gray-400 border-b border-[#2a2a2a]">{rows.length} satır · {qty} adet · <Totals totals={totals} empty="0" /></div>
       {rows.length === 0 ? <Empty>Kayıt yok.</Empty> : (
         <Table head={<tr><th className={thCls}>Tarih</th><th className={thCls}>Satış</th><th className={thCls}>Cari</th><th className={thCls}>Ürün</th><th className={thCls}>Adet</th><th className={`${thCls} text-right`}>Birim</th><th className={`${thCls} text-right`}>Toplam</th></tr>}>
@@ -188,13 +188,12 @@ async function Movements({ baslangic = "", bitis = "" }: { baslangic?: string; b
   });
   return (
     <Card padded={false}>
-      <form className="flex flex-wrap items-end gap-3 p-4 border-b border-[#2a2a2a]">
+      <AutoFilterForm className="flex flex-wrap items-end gap-3 p-4 border-b border-[#2a2a2a]">
         <input type="hidden" name="bolum" value="hareket" />
         <input type="date" name="baslangic" defaultValue={baslangic} className={`${inputCls} !w-auto`} aria-label="Başlangıç" />
         <input type="date" name="bitis" defaultValue={bitis} className={`${inputCls} !w-auto`} aria-label="Bitiş" />
-        <button className={btnSecondary}>Filtrele</button>
         <span className="text-xs text-gray-600 py-3">En fazla son 500 hareket gösterilir.</span>
-      </form>
+      </AutoFilterForm>
       {movements.length === 0 ? <Empty>Hareket yok.</Empty> : (
         <Table head={<tr><th className={thCls}>Tarih</th><th className={thCls}>Ürün</th><th className={thCls}>İşlem</th><th className={thCls}>Belge</th><th className={thCls}>Miktar</th><th className={thCls}>Kullanıcı</th></tr>}>
           {movements.map((m) => (

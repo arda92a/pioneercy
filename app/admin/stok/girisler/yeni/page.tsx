@@ -10,7 +10,7 @@ export default async function NewStockReceiptPage({ searchParams }: { searchPara
   const items = await pickerItems(prisma);
   const preselected = items.find((i) => i.id === Number(urun));
   return (
-    <div className="max-w-5xl">
+    <div>
       <PageHeader title="Yeni Stok Girişi" subtitle="Kaydedince adetler stoğa eklenir ve yazdırılabilir giriş fişi oluşur."
         crumbs={[{ href: "/admin/stok/girisler", label: "Stok Girişleri" }, { href: "/admin/stok/girisler/yeni", label: "Yeni" }]} />
       <Card>

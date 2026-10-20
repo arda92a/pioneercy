@@ -16,7 +16,7 @@ export default async function NewSalePage({ searchParams }: { searchParams: Prom
   ]);
   const generic = customers.find((c) => c.name.toLocaleLowerCase("tr").startsWith("genel"));
   return (
-    <div className="max-w-6xl">
+    <div>
       <PageHeader title="Yeni Satış" subtitle="Stok yetersizse satış kaydedilmez. Fiyat, ürün kartındaki fiyattan gelir; satırda değiştirilebilir."
         crumbs={[{ href: "/admin/stok/satislar", label: "Satışlar" }, { href: "/admin/stok/satislar/yeni", label: "Yeni" }]} />
       <Card>

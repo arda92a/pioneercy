@@ -11,7 +11,7 @@ export default async function EditStockReceiptPage({ params }: { params: Promise
   if (!receipt) notFound();
   const items = await pickerItems(prisma, { includeIds: receipt.lines.map((l) => l.stockItemId) });
   return (
-    <div className="max-w-5xl">
+    <div>
       <PageHeader
         title={`${receipt.code} düzenle`}
         subtitle="Adetleri değiştirirseniz stok farkı otomatik düzeltilir ve hareket geçmişine yazılır."

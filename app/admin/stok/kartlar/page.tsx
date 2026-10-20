@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { Plus, Search } from "lucide-react";
 import { listValues } from "@/lib/stok/server";
 import { BASE_CURRENCIES, PRICE_FIELDS, formatMoney } from "@/lib/stok/format";
-import { Badge, Card, Empty, PageHeader, Table, btnPrimary, btnSecondary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import { Badge, Card, Empty, PageHeader, Table, btnPrimary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import AutoFilterForm from "@/components/stok/AutoFilterForm";
 
 export default async function StockCardsPage({ searchParams }: {
   searchParams: Promise<{ q?: string; kategori?: string; yil?: string; durum?: string }>;
@@ -39,7 +40,7 @@ export default async function StockCardsPage({ searchParams }: {
         actions={<Link href="/admin/stok/kartlar/yeni" className={btnPrimary}><Plus className="w-4 h-4" /> Yeni Stok Kartı</Link>}
       />
 
-      <form className="grid grid-cols-1 md:grid-cols-[1fr_200px_140px_160px_auto] gap-3 mb-5">
+      <AutoFilterForm className="grid grid-cols-1 md:grid-cols-[1fr_200px_140px_160px] gap-3 mb-5">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input name="q" defaultValue={q} placeholder="Kod, marka, model, ürün adı veya araç ara…" className={`${inputCls} pl-9`} />
@@ -55,8 +56,7 @@ export default async function StockCardsPage({ searchParams }: {
           <option value="pasif">Pasif kartlar</option>
           <option value="hepsi">Hepsi</option>
         </select>
-        <button className={btnSecondary}>Filtrele</button>
-      </form>
+      </AutoFilterForm>
 
       <Card padded={false}>
         {items.length === 0 ? <Empty>Aramaya uyan stok kartı yok.</Empty> : (

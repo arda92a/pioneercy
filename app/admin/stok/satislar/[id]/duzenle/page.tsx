@@ -15,7 +15,7 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
 
   if (sale.cancelled || sale.returns.length) {
     return (
-      <div className="max-w-3xl">
+      <div>
         <PageHeader title={`${sale.code} düzenle`} crumbs={crumbs} />
         <Notice>
           {sale.cancelled ? "İptal edilmiş satış düzenlenemez." : "İade kaydı bulunan satış düzenlenemez; gerekirse yeni bir iade işlemi yapın."}{" "}
@@ -34,7 +34,7 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
   ]);
 
   return (
-    <div className="max-w-6xl">
+    <div>
       <PageHeader title={`${sale.code} düzenle`} subtitle="Eski kalemlerin stoğu geri eklenir, yeni kalemler düşülür; değişiklik geçmişe kaydedilir." crumbs={crumbs} />
       <Card>
         <SaleForm

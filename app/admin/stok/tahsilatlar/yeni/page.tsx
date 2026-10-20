@@ -18,7 +18,7 @@ export default async function NewPaymentPage({ searchParams }: { searchParams: P
   const openSales = sales.map((s) => ({ ...s, remaining: balanceOf(s.id, s.total).remaining })).filter((s) => s.remaining > 0);
 
   return (
-    <div className="max-w-5xl">
+    <div>
       <PageHeader title="Yeni Tahsilat" subtitle="Tahsilat yalnızca aynı para birimindeki satışlara bağlanabilir; para birimleri arasında dönüşüm yapılmaz."
         crumbs={[{ href: "/admin/stok/tahsilatlar", label: "Tahsilatlar" }, { href: "/admin/stok/tahsilatlar/yeni", label: "Yeni" }]} />
       <Card>

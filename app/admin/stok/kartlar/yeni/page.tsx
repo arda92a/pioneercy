@@ -8,7 +8,7 @@ export default async function NewStockItemPage() {
     listValues("Ürün Kategorisi"), listValues("Ürün Markası"), listValues("Ürün Modeli"),
   ]);
   return (
-    <div className="max-w-3xl">
+    <div>
       <PageHeader title="Yeni Stok Kartı" crumbs={[{ href: "/admin/stok/kartlar", label: "Stok Kartları" }, { href: "/admin/stok/kartlar/yeni", label: "Yeni" }]} />
       <Card>
         <StockItemForm action={saveStockItem.bind(null, null)} categories={categories} brands={brands} models={models} />

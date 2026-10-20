@@ -10,6 +10,7 @@ import CustomerForm from "@/components/stok/CustomerForm";
 import { ActionButton } from "@/components/stok/ActionForm";
 import PrintButton from "@/components/stok/PrintButton";
 import { Badge, Card, Empty, PageHeader, Table, Totals, btnPrimary, btnSecondary, inputCls, labelCls, tdCls, thCls } from "@/components/stok/ui";
+import AutoFilterForm from "@/components/stok/AutoFilterForm";
 
 type Event = { date: string; kind: "Satış" | "Satış İadesi" | "Tahsilat"; code: string; href: string; currency: string; debit: number; credit: number; note: string | null };
 const ORDER = { "Satış": 0, "Satış İadesi": 1, "Tahsilat": 2 };
@@ -86,12 +87,11 @@ export default async function CustomerPage({ params, searchParams }: {
         padded={false}
         actions={<div className="print:hidden"><PrintButton /></div>}
       >
-        <form className="flex flex-wrap items-end gap-3 px-5 py-4 border-b border-[#2a2a2a] print:hidden">
+        <AutoFilterForm className="flex flex-wrap items-end gap-3 px-5 py-4 border-b border-[#2a2a2a] print:hidden">
           <div><label className={labelCls}>Başlangıç</label><input type="date" name="baslangic" defaultValue={baslangic} className={inputCls} /></div>
           <div><label className={labelCls}>Bitiş</label><input type="date" name="bitis" defaultValue={bitis} className={inputCls} /></div>
-          <button className={btnSecondary}>Uygula</button>
           {(baslangic || bitis) && <Link href={`/admin/stok/cariler/${id}`} className="text-sm text-gray-500 hover:text-white py-2.5">Temizle</Link>}
-        </form>
+        </AutoFilterForm>
         {nonZero(opening).length > 0 && (
           <div className="px-5 py-3 text-sm text-gray-400 border-b border-[#2a2a2a]">Devreden bakiye: <Totals totals={nonZero(opening)} /></div>
         )}

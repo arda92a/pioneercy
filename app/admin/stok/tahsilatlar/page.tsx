@@ -2,7 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Plus, Search } from "lucide-react";
 import { formatDay, formatMoney } from "@/lib/stok/format";
-import { Card, Empty, PageHeader, Table, btnPrimary, btnSecondary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import { Card, Empty, PageHeader, Table, btnPrimary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import AutoFilterForm from "@/components/stok/AutoFilterForm";
 
 export default async function PaymentsPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
@@ -23,13 +24,12 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
         crumbs={[{ href: "/admin/stok/tahsilatlar", label: "Tahsilatlar" }]}
         actions={<Link href="/admin/stok/tahsilatlar/yeni" className={btnPrimary}><Plus className="w-4 h-4" /> Yeni Tahsilat</Link>}
       />
-      <form className="grid grid-cols-[1fr_auto] gap-3 mb-5">
+      <AutoFilterForm className="mb-5">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input name="q" defaultValue={q} placeholder="Makbuz no veya cari ara…" className={`${inputCls} pl-9`} />
         </div>
-        <button className={btnSecondary}>Ara</button>
-      </form>
+      </AutoFilterForm>
       <Card padded={false}>
         {payments.length === 0 ? <Empty>Tahsilat bulunamadı.</Empty> : (
           <Table head={<tr><th className={thCls}>Makbuz</th><th className={thCls}>Cari</th><th className={thCls}>Yöntem</th><th className={thCls}>Bağlı satışlar</th><th className={`${thCls} text-right`}>Tutar</th></tr>}>

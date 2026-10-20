@@ -2,7 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Plus, Search } from "lucide-react";
 import { customerBalances, nonZero } from "@/lib/stok/queries";
-import { Badge, Card, Empty, PageHeader, Table, Totals, btnPrimary, btnSecondary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import { Badge, Card, Empty, PageHeader, Table, Totals, btnPrimary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import AutoFilterForm from "@/components/stok/AutoFilterForm";
 
 export default async function CustomersPage({ searchParams }: { searchParams: Promise<{ q?: string; durum?: string }> }) {
   const { q = "", durum = "aktif" } = await searchParams;
@@ -27,7 +28,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
         crumbs={[{ href: "/admin/stok/cariler", label: "Cariler" }]}
         actions={<Link href="/admin/stok/cariler/yeni" className={btnPrimary}><Plus className="w-4 h-4" /> Yeni Cari</Link>}
       />
-      <form className="grid grid-cols-1 sm:grid-cols-[1fr_180px_auto] gap-3 mb-5">
+      <AutoFilterForm className="grid grid-cols-1 sm:grid-cols-[1fr_180px] gap-3 mb-5">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input name="q" defaultValue={q} placeholder="Ad, kod, telefon ara…" className={`${inputCls} pl-9`} />
@@ -38,8 +39,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
           <option value="pasif">Pasif cariler</option>
           <option value="hepsi">Hepsi</option>
         </select>
-        <button className={btnSecondary}>Filtrele</button>
-      </form>
+      </AutoFilterForm>
       <Card padded={false}>
         {customers.length === 0 ? <Empty>Cari bulunamadı.</Empty> : (
           <Table head={<tr><th className={thCls}>Kod</th><th className={thCls}>Ad / unvan</th><th className={thCls}>Telefon</th><th className={thCls}>Satış</th><th className={thCls}>Bakiye</th></tr>}>

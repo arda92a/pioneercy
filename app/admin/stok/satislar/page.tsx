@@ -4,7 +4,8 @@ import { Plus, Search } from "lucide-react";
 import { listValues } from "@/lib/stok/server";
 import { saleBalances } from "@/lib/stok/queries";
 import { formatDay, formatMoney } from "@/lib/stok/format";
-import { Badge, Card, Empty, PageHeader, Table, btnPrimary, btnSecondary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import { Badge, Card, Empty, PageHeader, Table, btnPrimary, inputCls, tdCls, thCls } from "@/components/stok/ui";
+import AutoFilterForm from "@/components/stok/AutoFilterForm";
 
 export default async function SalesPage({ searchParams }: {
   searchParams: Promise<{ q?: string; para?: string; durum?: string }>;
@@ -40,7 +41,7 @@ export default async function SalesPage({ searchParams }: {
         crumbs={[{ href: "/admin/stok/satislar", label: "Satışlar" }]}
         actions={<Link href="/admin/stok/satislar/yeni" className={btnPrimary}><Plus className="w-4 h-4" /> Yeni Satış</Link>}
       />
-      <form className="grid grid-cols-1 sm:grid-cols-[1fr_140px_180px_auto] gap-3 mb-5">
+      <AutoFilterForm className="grid grid-cols-1 sm:grid-cols-[1fr_180px_200px] gap-3 mb-5">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input name="q" defaultValue={q} placeholder="Satış no, cari, plaka veya ürün ara…" className={`${inputCls} pl-9`} />
@@ -54,8 +55,7 @@ export default async function SalesPage({ searchParams }: {
           <option value="acik">Ödemesi kalanlar</option>
           <option value="iptal">İptal edilenler</option>
         </select>
-        <button className={btnSecondary}>Filtrele</button>
-      </form>
+      </AutoFilterForm>
       <Card padded={false}>
         {sales.length === 0 ? <Empty>Satış bulunamadı.</Empty> : (
           <Table head={<tr><th className={thCls}>Satış</th><th className={thCls}>Cari</th><th className={thCls}>Ürünler</th><th className={`${thCls} text-right`}>Toplam</th><th className={`${thCls} text-right`}>Kalan</th></tr>}>
