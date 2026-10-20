@@ -1,5 +1,5 @@
 /**
- * Eski "stok_satis_web" Excel çalışma kitabını veritabanına bir kerelik aktarır.
+ * Başlangıç stok/satış verisini (prisma/stok-seed) veritabanına bir kerelik aktarır.
  *
  *   npx tsx prisma/import-stok.ts [excel-yolu] [--reset]
  *
@@ -17,7 +17,7 @@ const prisma = new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: `file:
 
 const args = process.argv.slice(2);
 const reset = args.includes("--reset");
-const excelPath = path.resolve(args.find((a) => !a.startsWith("--")) ?? "stok_satis_web/data/stok_satis_guncel.xlsx");
+const excelPath = path.resolve(args.find((a) => !a.startsWith("--")) ?? "prisma/stok-seed/stok_satis_guncel.xlsx");
 
 const STOCK_USERS = [
   { username: "turgut", name: "Turgut", legacy: ["turgut"] },
@@ -134,8 +134,10 @@ async function main() {
         await tx.stockSetting.create({ data: { key, value: String(r.deger ?? "") } });
       }
     }
-    const legacyLogo = path.resolve(path.dirname(excelPath), "..", "derin_sahil_logo.png");
-    if (fs.existsSync(legacyLogo)) {
+    const legacyLogo = [path.dirname(excelPath), path.resolve(path.dirname(excelPath), "..")]
+      .map((dir) => path.join(dir, "derin_sahil_logo.png"))
+      .find((p) => fs.existsSync(p));
+    if (legacyLogo) {
       const target = path.resolve("public", "uploads", "stok-logo.png");
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.copyFileSync(legacyLogo, target);
