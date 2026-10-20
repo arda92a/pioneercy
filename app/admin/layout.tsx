@@ -6,9 +6,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AdminSessionProvider>
       <AdminThemeProvider>
-        <div className="min-h-screen bg-[#0a0a0a] flex">
+        <div className="min-h-screen bg-[#0a0a0a] flex print:bg-white print:block">
           <AdminSidebar />
-          <main className="flex-1 ml-0 lg:ml-64 p-6 lg:p-8 pt-16 lg:pt-8">{children}</main>
+          <main className="flex-1 min-w-0 ml-0 lg:ml-64 p-6 lg:p-8 pt-16 lg:pt-8 print:m-0 print:p-0">{children}</main>
         </div>
       </AdminThemeProvider>
     </AdminSessionProvider>

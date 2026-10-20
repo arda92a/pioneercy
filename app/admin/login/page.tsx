@@ -2,11 +2,11 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Lock, User, AlertCircle } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     const res = await signIn("credentials", {
-      email,
+      login,
       password,
       redirect: false,
     });
@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
     setLoading(false);
 
     if (res?.error) {
-      setError("Email veya şifre hatalı.");
+      setError("Kullanıcı adı veya şifre hatalı.");
     } else {
       router.push("/admin");
       router.refresh();
@@ -54,15 +54,17 @@ export default function AdminLoginPage() {
           )}
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Email</label>
+            <label className="block text-sm text-gray-400 mb-1.5">Kullanıcı adı</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
                 required
-                placeholder="admin@example.com"
+                autoCapitalize="none"
+                autoComplete="username"
+                placeholder="kullanıcı adı"
                 className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-colors"
               />
             </div>

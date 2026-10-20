@@ -36,9 +36,244 @@ model Product {
 
 model User {
   id        Int      @id @default(autoincrement())
+  username  String?  @unique
   name      String?
-  email     String   @unique
+  email     String?  @unique
   password  String
   role      String   @default("admin")
   createdAt DateTime @default(now())
+
+  stockMovements   StockMovement[]
+  stockAdjustments StockAdjustment[]
+  stockReceipts    StockReceipt[]
+  sales            Sale[]
+  saleReturns      SaleReturn[]
+  payments         Payment[]
+  auditLogs        AuditLog[]
+}
+
+// ===== Stok & Satış =====
+// Para tutarları kuruş/cent cinsinden tamsayı olarak saklanır (12,50 → 1250).
+// Gün bazlı tarihler (satış, tahsilat, giriş tarihi) "YYYY-AA-GG" metni olarak saklanır.
+
+model StockItem {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  category    String
+  brand       String
+  model       String   @default("")
+  name        String
+  priceTry    Int?
+  priceEur    Int?
+  priceUsd    Int?
+  priceGbp    Int?
+  quantity    Int      @default(0)
+  minQuantity Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  fits         VehicleFit[]
+  movements    StockMovement[]
+  adjustments  StockAdjustment[]
+  receiptLines StockReceiptLine[]
+  saleLines    SaleLine[]
+  returnLines  SaleReturnLine[]
+}
+
+model VehicleFit {
+  id          Int       @id @default(autoincrement())
+  stockItemId Int
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  brand       String
+  model       String
+  yearFrom    Int?
+  yearTo      Int?
+}
+
+model StockMovement {
+  id          Int       @id @default(autoincrement())
+  date        DateTime  @default(now())
+  type        String
+  ref         String
+  stockItemId Int
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+  quantity    Int
+  note        String?
+  userId      Int?
+  user        User?     @relation(fields: [userId], references: [id])
+
+  @@index([stockItemId])
+}
+
+model StockAdjustment {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  date        String
+  stockItemId Int
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+  oldQuantity Int
+  newQuantity Int
+  difference  Int
+  reason      String
+  userId      Int?
+  user        User?     @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model StockReceipt {
+  id        Int                @id @default(autoincrement())
+  code      String             @unique
+  date      String
+  note      String?
+  userId    Int?
+  user      User?              @relation(fields: [userId], references: [id])
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @default(now()) @updatedAt
+  lines     StockReceiptLine[]
+}
+
+model StockReceiptLine {
+  id          Int          @id @default(autoincrement())
+  receiptId   Int
+  receipt     StockReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  stockItemId Int
+  stockItem   StockItem    @relation(fields: [stockItemId], references: [id])
+  quantity    Int
+  note        String?
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  type          String   @default("Şahıs")
+  name          String
+  phone         String?
+  address       String?
+  email         String?
+  contactPerson String?
+  notes         String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  sales    Sale[]
+  payments Payment[]
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  code       String   @unique
+  date       String
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+  currency   String
+  total      Int
+  plate      String?
+  notes      String?
+  cancelled  Boolean  @default(false)
+  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  lines       SaleLine[]
+  returns     SaleReturn[]
+  allocations PaymentAllocation[]
+}
+
+model SaleLine {
+  id          Int       @id @default(autoincrement())
+  saleId      Int
+  sale        Sale      @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  stockItemId Int
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+  name        String
+  quantity    Int
+  unitPrice   Int
+  lineTotal   Int
+}
+
+model SaleReturn {
+  id        Int              @id @default(autoincrement())
+  code      String           @unique
+  saleId    Int
+  sale      Sale             @relation(fields: [saleId], references: [id])
+  date      String
+  currency  String
+  total     Int
+  note      String?
+  userId    Int?
+  user      User?            @relation(fields: [userId], references: [id])
+  createdAt DateTime         @default(now())
+  lines     SaleReturnLine[]
+}
+
+model SaleReturnLine {
+  id          Int        @id @default(autoincrement())
+  returnId    Int
+  saleReturn  SaleReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
+  stockItemId Int
+  stockItem   StockItem  @relation(fields: [stockItemId], references: [id])
+  quantity    Int
+  unitPrice   Int
+  lineTotal   Int
+}
+
+model Payment {
+  id          Int                 @id @default(autoincrement())
+  code        String              @unique
+  date        String
+  customerId  Int
+  customer    Customer            @relation(fields: [customerId], references: [id])
+  currency    String
+  amount      Int
+  method      String
+  note        String?
+  userId      Int?
+  user        User?               @relation(fields: [userId], references: [id])
+  createdAt   DateTime            @default(now())
+  allocations PaymentAllocation[]
+}
+
+model PaymentAllocation {
+  id        Int     @id @default(autoincrement())
+  paymentId Int
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  saleId    Int
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  amount    Int
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  kind      String
+  ref       String
+  oldValue  String?
+  newValue  String?
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model ImportLog {
+  id        Int      @id @default(autoincrement())
+  fileName  String
+  kind      String
+  added     Int
+  skipped   Int
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model StockSetting {
+  key   String @id
+  value String
+}
+
+model StockListValue {
+  id     Int     @id @default(autoincrement())
+  group  String
+  value  String
+  active Boolean @default(true)
+
+  @@unique([group, value])
 }

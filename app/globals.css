@@ -50,6 +50,13 @@
 /* Table rows */
 [data-admin-theme="light"] .hover\:bg-\[\#111111\]:hover { background-color: #f8fafc !important; }
 
+/* ===== Stok belgeleri (yazdırma) ===== */
+@media print {
+  @page { size: A4; margin: 14mm; }
+  html, body, [data-admin-theme] { background: #ffffff !important; }
+  .stok-doc, .stok-doc * { color: #111827 !important; }
+}
+
 @theme inline {
   --color-pioneer-red: var(--pioneer-red);
   --color-pioneer-red-dark: var(--pioneer-red-dark);

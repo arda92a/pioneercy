@@ -52,3 +52,5 @@ prisma/dev.db-journal
 public/uploads/*
 !public/uploads/.gitkeep
 
+backups/
+stok_satis_web/

@@ -8,14 +8,15 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        login: { label: "Kullanıcı adı", type: "text" },
         password: { label: "Şifre", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        const login = credentials?.login?.trim();
+        if (!login || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        const user = await prisma.user.findFirst({
+          where: { OR: [{ username: login }, { email: login }] },
         });
 
         if (!user) return null;
@@ -23,7 +24,7 @@ export const authOptions: NextAuthOptions = {
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
 
-        return { id: String(user.id), name: user.name, email: user.email, role: user.role };
+        return { id: String(user.id), name: user.name ?? user.username, email: user.email, role: user.role };
       },
     }),
   ],
@@ -37,7 +38,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (session.user) (session.user as { role?: string }).role = token.role as string;
+      if (session.user) {
+        (session.user as { role?: string }).role = token.role as string;
+        (session.user as { id?: string }).id = token.sub;
+      }
       return session;
     },
   },

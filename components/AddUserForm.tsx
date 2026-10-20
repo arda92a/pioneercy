@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 
 export default function AddUserForm() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", username: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function AddUserForm() {
       setError(data.error ?? "Bir hata oluştu");
     } else {
       setSuccess("Kullanıcı başarıyla eklendi.");
-      setForm({ name: "", email: "", password: "" });
+      setForm({ name: "", username: "", password: "" });
       router.refresh();
     }
   }
@@ -39,18 +39,18 @@ export default function AddUserForm() {
       {success && <div className="bg-green-950/50 border border-green-900/50 text-green-400 text-sm px-4 py-3 rounded-xl">{success}</div>}
 
       <div>
+        <label className="block text-sm text-gray-400 mb-1.5">Kullanıcı adı <span className="text-[#E4171E]">*</span></label>
+        <input type="text" required autoCapitalize="none" value={form.username} onChange={(e) => setForm(f => ({ ...f, username: e.target.value }))} placeholder="ali"
+          className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
+      </div>
+      <div>
         <label className="block text-sm text-gray-400 mb-1.5">Ad Soyad</label>
         <input type="text" value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ali Yılmaz"
           className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
       </div>
       <div>
-        <label className="block text-sm text-gray-400 mb-1.5">Email <span className="text-[#E4171E]">*</span></label>
-        <input type="email" required value={form.email} onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))} placeholder="ali@dselectronics.com"
-          className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
-      </div>
-      <div>
         <label className="block text-sm text-gray-400 mb-1.5">Şifre <span className="text-[#E4171E]">*</span></label>
-        <input type="password" required minLength={8} value={form.password} onChange={(e) => setForm(f => ({ ...f, password: e.target.value }))} placeholder="Minimum 8 karakter"
+        <input type="password" required value={form.password} onChange={(e) => setForm(f => ({ ...f, password: e.target.value }))} placeholder="Şifre"
           className="w-full bg-[#0d0d0d] border border-[#3a3a3a] focus:border-[#E4171E] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm outline-none transition-colors" />
       </div>
       <button type="submit" disabled={loading}

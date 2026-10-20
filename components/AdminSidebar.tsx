@@ -4,16 +4,39 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon, FolderOpen, Image as ImageIcon } from "lucide-react";
+import {
+  LayoutDashboard, Package, Plus, Users, LogOut, Menu, X, ExternalLink, Sun, Moon, FolderOpen, Image as ImageIcon,
+  Gauge, Boxes, PackagePlus, Contact, ShoppingCart, Wallet, BarChart3, FileSpreadsheet, Settings,
+} from "lucide-react";
 import { useAdminTheme } from "@/components/AdminThemeProvider";
 
-const navItems = [
-  { href: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
-  { href: "/admin/urunler", icon: Package, label: "Ürünler", exact: false, exclude: "/admin/urunler/yeni" },
-  { href: "/admin/urunler/yeni", icon: Plus, label: "Yeni Ürün" },
-  { href: "/admin/kategoriler", icon: FolderOpen, label: "Kategoriler" },
-  { href: "/admin/anasayfa", icon: ImageIcon, label: "Ana Sayfa Görselleri" },
-  { href: "/admin/kullanicilar", icon: Users, label: "Kullanıcılar" },
+type NavItem = { href: string; icon: typeof Package; label: string; exact?: boolean; exclude?: string };
+
+const navGroups: { label?: string; items: NavItem[] }[] = [
+  {
+    items: [
+      { href: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
+      { href: "/admin/urunler", icon: Package, label: "Ürünler", exclude: "/admin/urunler/yeni" },
+      { href: "/admin/urunler/yeni", icon: Plus, label: "Yeni Ürün" },
+      { href: "/admin/kategoriler", icon: FolderOpen, label: "Kategoriler" },
+      { href: "/admin/anasayfa", icon: ImageIcon, label: "Ana Sayfa Görselleri" },
+      { href: "/admin/kullanicilar", icon: Users, label: "Kullanıcılar" },
+    ],
+  },
+  {
+    label: "Stok & Satış",
+    items: [
+      { href: "/admin/stok", icon: Gauge, label: "Genel Bakış", exact: true },
+      { href: "/admin/stok/kartlar", icon: Boxes, label: "Stok Kartları" },
+      { href: "/admin/stok/girisler", icon: PackagePlus, label: "Stok Girişleri" },
+      { href: "/admin/stok/cariler", icon: Contact, label: "Cariler" },
+      { href: "/admin/stok/satislar", icon: ShoppingCart, label: "Satışlar" },
+      { href: "/admin/stok/tahsilatlar", icon: Wallet, label: "Tahsilatlar" },
+      { href: "/admin/stok/raporlar", icon: BarChart3, label: "Raporlar" },
+      { href: "/admin/stok/aktarim", icon: FileSpreadsheet, label: "Excel Aktarım" },
+      { href: "/admin/stok/ayarlar", icon: Settings, label: "Stok Ayarları" },
+    ],
+  },
 ];
 
 export default function AdminSidebar() {
@@ -28,7 +51,7 @@ export default function AdminSidebar() {
   }
 
   return (
-    <>
+    <div className="print:hidden">
       {/* Mobile hamburger — only visible when sidebar is closed */}
       {!open && (
         <button
@@ -73,26 +96,33 @@ export default function AdminSidebar() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href, item.exact, "exclude" in item ? item.exclude as string : undefined);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  active
-                    ? "bg-[#E4171E] text-white font-medium"
-                    : "text-gray-400 hover:text-white hover:bg-[#1a1a1a]"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {navGroups.map((group, gi) => (
+            <div key={gi} className="space-y-1">
+              {group.label && (
+                <div className="px-3 pt-5 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-600">{group.label}</div>
+              )}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href, item.exact, item.exclude);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      active
+                        ? "bg-[#E4171E] text-white font-medium"
+                        : "text-gray-400 hover:text-white hover:bg-[#1a1a1a]"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Footer */}
@@ -125,6 +155,6 @@ export default function AdminSidebar() {
           </button>
         </div>
       </aside>
-    </>
+    </div>
   );
 }

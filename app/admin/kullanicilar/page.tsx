@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 export default async function UsersPage() {
   const users = await prisma.user.findMany({
-    select: { id: true, name: true, email: true, role: true, createdAt: true },
+    select: { id: true, username: true, name: true, email: true, role: true, createdAt: true },
     orderBy: { createdAt: "asc" },
   });
 
@@ -36,8 +36,8 @@ export default async function UsersPage() {
                     <UserCircle className="w-5 h-5 text-gray-500" />
                   </div>
                   <div>
-                    <div className="text-white text-sm font-medium">{u.name ?? u.email}</div>
-                    <div className="text-gray-500 text-xs">{u.email}</div>
+                    <div className="text-white text-sm font-medium">{u.username ?? u.email}</div>
+                    {u.name && <div className="text-gray-500 text-xs">{u.name}</div>}
                   </div>
                 </div>
                 <DeleteUserButton id={u.id} />

@@ -10,8 +10,13 @@ export default function DeleteUserButton({ id }: { id: number }) {
   async function handleDelete() {
     if (!confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) return;
     setLoading(true);
-    await fetch(`/api/users?id=${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/users?id=${id}`, { method: "DELETE" });
     setLoading(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error ?? "Kullanıcı silinemedi.");
+      return;
+    }
     router.refresh();
   }
 
